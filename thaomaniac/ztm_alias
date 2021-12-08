@@ -1,0 +1,77 @@
+alias update='sudo apt-get update'
+alias autorm='sudo apt-get autoremove'
+alias autoclean='sudo apt-get autoclean'
+
+# Combine 'mkdir' and 'cd'
+mkdircd ()
+{
+    mkdir "$1" &&
+    cd "$1"
+}
+
+# Swith php version
+switchphp(){
+    sudo a2dismod php"$1" &&
+    sudo a2enmod php"$2" &&
+    sudo update-alternatives --set php /usr/bin/php"$2" &&
+    sudo systemctl restart apache2
+}
+
+switchtophp()
+{
+    current=$(php -v | head -n 1 | cut -c5-7)
+    if [ $current = $1 ]; then
+    	echo "module php$1 already enable";
+    else
+    	sudo a2dismod php${current} &&
+    	sudo a2enmod php"$1" &&
+    	sudo update-alternatives --set php /usr/bin/php"$1" &&
+        sudo systemctl restart apache2
+    fi
+}
+
+##----------GIT command----------##
+
+# git commit with branch name as prefix
+commit()
+{
+    if [ "$vcs_info_msg_0_" = "" ]; then
+        echo "\e[1;31mUnknown branch name\e[0m"
+        return 1;
+    fi
+    if [ -n "$2" ]; then
+        echo "\033[1mSyntax error\033[0m: Only 1 parameter can be passed!"
+        return 1;
+    else
+        git commit -m "$vcs_info_msg_0_: $1"
+    fi
+}
+
+# git push --set-upstream origin <branch>
+pushnew()
+{
+    if [ "$vcs_info_msg_0_" = "" ]; then
+        echo "\e[1;31mUnknown branch name\e[0m"
+        return 1;
+    else
+        git push --set-upstream origin $vcs_info_msg_0_
+    fi
+    
+}
+
+##----------END git command----------##
+
+##----------Magento command----------##
+
+alias m2='php bin/magento'
+
+alias sdc='php bin/magento setup:di:compile'
+alias cc='php bin/magento cache:clean'
+alias cf='php bin/magento cache:flush'
+alias ssd='php bin/magento setup:static-content:deploy'
+alias seup='php bin/magento setup:upgrade'
+
+##----------END Magento command----------##
+
+# Reset 30 days trial phpstorm
+alias phpstorm_reset='rm -f ~/.config/JetBrains/PhpStorm*/options/other.xml;rm -rf ~/.config/JetBrains/PhpStorm*/eval;rm -rf ~/.java/.userPrefs'

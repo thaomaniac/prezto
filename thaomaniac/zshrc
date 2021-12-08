@@ -1,0 +1,39 @@
+#
+# Executes commands at the start of an interactive session.
+#
+# Authors:
+#   Sorin Ionescu <sorin.ionescu@gmail.com>
+#
+
+ZTMDIR=${ZDOTDIR:-$HOME}/.zprezto/thaomaniac
+# Source Prezto.
+if [[ -s "$ZTMDIR/init.zsh" ]]; then
+  source "$ZTMDIR/init.zsh"
+fi
+
+# Customize to your needs...
+
+#----- Load Alias Command -----#
+if [[ -s "$ZTMDIR/ztm_alias" ]]; then
+  source "$ZTMDIR/ztm_alias"
+fi
+
+#----- Load Rewrite Theme -----#
+if [[ -s "$ZTMDIR/ztm_customize_prompt" ]]; then
+  source "$ZTMDIR/ztm_customize_prompt"
+fi
+
+# remove background color 'ls'
+export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
+
+#remove autocompletion color
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS_xx}
+
+# Fix cursor style to I-Beam
+_fix_cursor() {
+   echo -ne '\e[5 q'
+}
+precmd_functions+=(_fix_cursor)
+
+# Disable correct command
+unsetopt correct
