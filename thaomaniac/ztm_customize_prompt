@@ -4,7 +4,7 @@
 prompt_end() {
   if [[ -n $CURRENT_BG ]]; then
     #print -n "%{%k%F{$CURRENT_BG}%} $"
-    print -n "%{%k%F{green}%} ❯%B_%b"
+    print -n "%{%k%F{green}%} ❯$prompt_newline❯%B_%b"
   else
     print -n "%{%k%}"
   fi
@@ -48,8 +48,8 @@ prompt_git() {
 
 # Dir: current working directory
 prompt_dir() {
-  #prompt_segment default default ' %~'
-  prompt_segment default default ' %4c'
+  prompt_segment default default ' %~'
+  #prompt_segment default default ' %4c'
 }
 
 # Status:
