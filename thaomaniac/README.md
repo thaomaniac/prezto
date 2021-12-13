@@ -29,4 +29,4 @@
     - [Nerd Fonts](https://www.nerdfonts.com/)
       
         Recommend using _Overpass Regular Nerd Font Complete_: 
-        [Download](https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Overpass/Mono/Regular/complete/Overpass%20Mono%20Regular%20Nerd%20Font%20Complete.otf)
+        [Download](https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Overpass/Non-Mono/Regular/complete/Overpass%20Regular%20Nerd%20Font%20Complete.otf)
