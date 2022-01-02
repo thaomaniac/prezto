@@ -66,6 +66,12 @@ pushnew()
 
 ##----------END git command----------##
 
+##----------CodeIgniter command----------##
+
+alias ci='php spark'
+
+##----------END CodeIgniter command----------##
+
 ##----------Magento command----------##
 
 alias m2='php bin/magento'
