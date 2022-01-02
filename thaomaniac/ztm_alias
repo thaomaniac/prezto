@@ -1,5 +1,5 @@
 alias update='sudo apt-get update'
-alias autorm='sudo apt-get autoremove'
+alias autoremove='sudo apt-get autoremove'
 alias autoclean='sudo apt-get autoclean'
 
 #alias colorls command
