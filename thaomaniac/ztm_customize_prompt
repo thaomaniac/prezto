@@ -42,6 +42,9 @@ load_dir_icon() {
     elif [[ -s "$PWD/bin/magento" ]]; then
       START_ICON="\ue740" #
       return 1
+    elif [[ -s "$PWD/spark" && -d "$PWD/vendor/codeigniter4" ]]; then
+      START_ICON="\ue780" #
+      return 1
     else
       START_ICON="\uf07c" #
     fi
