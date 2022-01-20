@@ -46,7 +46,8 @@ load_dir_icon() {
       START_ICON="\ue780" #
       return 1
     else
-      START_ICON="\uf07c" #
+      START_ICON="\uf31b" #
+      #START_ICON="\uf07c" #
     fi
     if [[ ! -w $PWD ]]; then
       local -i w=$?
