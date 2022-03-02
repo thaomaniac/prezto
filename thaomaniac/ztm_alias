@@ -53,7 +53,7 @@ commit()
 }
 
 # git push --set-upstream origin <branch>
-pushnew()
+pushsetupstream()
 {
     if [ "$vcs_info_msg_0_" = "" ]; then
         echo "\e[1;31mUnknown branch name\e[0m"
