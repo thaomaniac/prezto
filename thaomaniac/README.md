@@ -17,7 +17,7 @@
 03. Create a new Zsh configuration by copying/linking the Zsh configuration files provided:
 
     ```console
-    ln -s "${ZDOTDIR:-$HOME}"/.zprezto/thaomaniac/zshrc" "${ZDOTDIR:-$HOME}/.zshrc"
+    ln -s "${ZDOTDIR:-$HOME}"/.zprezto/thaomaniac/zshrc "${ZDOTDIR:-$HOME}/.zshrc"
     ```
     
 04. Download and install fonts.
