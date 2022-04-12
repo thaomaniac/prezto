@@ -26,13 +26,18 @@ switchtophp()
 {
     current=$(php -v | head -n 1 | cut -c5-7)
     if [ $current = $1 ]; then
-    	echo "module php$1 already enable";
+	echo "module php$1 already enable";
     else
-    	sudo a2dismod php${current} &&
-    	sudo a2enmod php"$1" &&
-    	sudo update-alternatives --set php /usr/bin/php"$1" &&
+	sudo a2dismod php${current} &&
+	sudo a2enmod php"$1" &&
+	sudo update-alternatives --set php /usr/bin/php"$1" &&
         sudo systemctl restart apache2
     fi
+}
+
+# Restart service
+restart(){
+    sudo service $1 restart
 }
 
 ##----------GIT command----------##
