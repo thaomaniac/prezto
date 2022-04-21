@@ -79,13 +79,62 @@ alias ci='php spark'
 
 ##----------Magento command----------##
 
-alias m2='php bin/magento'
+#alias m2='php bin/magento'
 
-alias sdc='php bin/magento setup:di:compile'
-alias cc='php bin/magento cache:clean'
-alias cf='php bin/magento cache:flush'
-alias ssd='php bin/magento setup:static-content:deploy'
-alias seup='php bin/magento setup:upgrade'
+#alias sdc='php bin/magento setup:di:compile'
+#alias cc='php bin/magento cache:clean'
+#alias cf='php bin/magento cache:flush'
+#alias ssd='php bin/magento setup:static-content:deploy'
+#alias seup='php bin/magento setup:upgrade'
+
+#---Alias with Nginx multiple php
+
+alias m2='eval $(phpVer) bin/magento'
+alias cc='eval $(phpVer) bin/magento cache:clean'
+alias cf='eval $(phpVer) bin/magento cache:flush'
+alias sdc='eval $(phpVer) bin/magento setup:di:compile'
+alias ssd='eval $(phpVer) bin/magento setup:static-content:deploy'
+alias seup='eval $(phpVer) bin/magento setup:upgrade'
+
+phpVer()
+{
+    magentoVer=$(bin/magento -V | awk '{print $NF}' | cut -c1-5)
+
+    case $magentoVer in
+        '2.3.5'|'2.3.6')
+            echo 'php7.3'
+        ;;
+        '2.3.7'|'2.4.0'|'2.4.1'|'2.4.2'|'2.4.3')
+            echo 'php7.4'
+        ;;
+        '2.4.4')
+            echo 'php8.1'
+        ;;
+        *)
+            echo 'php'
+        ;;
+    esac
+
+#    declare -A array_version
+#    array_version=(
+#       [2.3.5]='7.3'
+#       [2.3.6]='7.3'
+#       [2.3.7]='7.4'
+#       [2.4.0]='7.4'
+#       [2.4.1]='7.4'
+#       [2.4.2]='7.4'
+#       [2.4.3]='7.4'
+#       [2.4.4]='8.1'
+#   )
+#
+#    phpVer=${array_version[$magentoVer]}
+#    if [ -z "${phpVer}" ]; then
+#        echo "php"
+#    else
+#        echo "php$phpVer"
+#    fi
+
+}
 
 ##----------END Magento command----------##
 
