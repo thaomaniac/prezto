@@ -8,12 +8,6 @@ if type "colorls" > /dev/null; then
 fi
 
 # Swith php version
-switchphp(){
-    sudo a2dismod php"$1" &&
-    sudo a2enmod php"$2" &&
-    sudo update-alternatives --set php /usr/bin/php"$2" &&
-    sudo systemctl restart apache2
-}
 
 switchtophp()
 {
