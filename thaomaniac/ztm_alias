@@ -17,8 +17,8 @@ switchtophp()
     else
 	sudo a2dismod php${current} &&
 	sudo a2enmod php"$1" &&
-	sudo update-alternatives --set php /usr/bin/php"$1" 
-	#&& sudo systemctl restart apache2
+	sudo update-alternatives --set php /usr/bin/php"$1" &&
+        sudo systemctl restart apache2
     fi
 }
 
