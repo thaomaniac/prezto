@@ -7,13 +7,6 @@ if type "colorls" > /dev/null; then
   alias ls='colorls'
 fi
 
-# Combine 'mkdir' and 'cd'
-mkdircd ()
-{
-    mkdir "$1" &&
-    cd "$1"
-}
-
 # Swith php version
 switchphp(){
     sudo a2dismod php"$1" &&
