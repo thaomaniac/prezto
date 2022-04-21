@@ -10,11 +10,12 @@ fi
 # Switch php version
 switchphp()
 {
-    sudo update-alternatives --config php
-}
-switchtophp()
-{
-	sudo update-alternatives --set php /usr/bin/php"$1"
+    if [ -z "$1" ]; then
+        sudo update-alternatives --config php
+    else
+        sudo update-alternatives --set php /usr/bin/php"$1"
+    fi
+
 }
 
 # Restart service
