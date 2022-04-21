@@ -7,24 +7,11 @@ if type "colorls" > /dev/null; then
   alias ls='colorls'
 fi
 
-# Swith php version Apache
-#switchtophp()
-#{
-#    current=$(php -v | head -n 1 | cut -c5-7)
-#    if [ $current = $1 ]; then
-#	    echo "module php$1 already enable";
-#    else
-#        sudo a2dismod php${current} &&
-#        sudo a2enmod php"$1" &&
-#        sudo update-alternatives --set php /usr/bin/php"$1" &&
-#        sudo systemctl restart apache2
-#    fi
-#}
+# Switch php version
 switchphp()
 {
     sudo update-alternatives --config php
 }
-# Switch php version Nginx
 switchtophp()
 {
 	sudo update-alternatives --set php /usr/bin/php"$1"
