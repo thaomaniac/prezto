@@ -109,26 +109,6 @@ phpVer()
             echo 'php'
         ;;
     esac
-
-#    declare -A array_version
-#    array_version=(
-#       [2.3.5]='7.3'
-#       [2.3.6]='7.3'
-#       [2.3.7]='7.4'
-#       [2.4.0]='7.4'
-#       [2.4.1]='7.4'
-#       [2.4.2]='7.4'
-#       [2.4.3]='7.4'
-#       [2.4.4]='8.1'
-#   )
-#
-#    phpVer=${array_version[$magentoVer]}
-#    if [ -z "${phpVer}" ]; then
-#        echo "php"
-#    else
-#        echo "php$phpVer"
-#    fi
-
 }
 
 ##----------END Magento command----------##
