@@ -88,7 +88,7 @@ phpVer()
 
     for ver in '' 7.4 7.3 8.1
     do
-        magentoVer=$(php$ver bin/magento -V | awk '{print $NF}' | cut -c1-5)
+        magentoVer=$(php$ver bin/magento -V | tail -n 1 | awk '{print $NF}' | cut -c1-5)
         if [[ $magentoVer =~ ^[0-9]+(\.[0-9]+){2,3}$ ]]; then
            break
         fi
