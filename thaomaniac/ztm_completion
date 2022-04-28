@@ -1,0 +1,2 @@
+# alias restart service
+compdef _service res_service

@@ -23,6 +23,11 @@ if [[ -s "$ZTMDIR/ztm_customize_prompt" ]]; then
   source "$ZTMDIR/ztm_customize_prompt"
 fi
 
+#----- Load Custom Completion -----#
+if [[ -s "$ZTMDIR/ztm_completion" ]]; then
+  source "$ZTMDIR/ztm_completion"
+fi
+
 # remove background color 'ls'
 export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
 
