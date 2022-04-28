@@ -68,8 +68,9 @@ alias ci='php spark'
 #alias seup='php bin/magento setup:upgrade'
 
 #---Alias with Nginx multiple php
-
-alias m2='eval $(phpVer) bin/magento'
+m2() {
+	eval $(phpVer) bin/magento "$@"
+}
 alias cc='eval $(phpVer) bin/magento cache:clean'
 alias cf='eval $(phpVer) bin/magento cache:flush'
 alias sdc='eval $(phpVer) bin/magento setup:di:compile'

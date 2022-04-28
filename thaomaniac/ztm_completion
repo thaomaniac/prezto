@@ -1,2 +1,11 @@
 # alias restart service
 compdef _service res_service
+
+# magento
+magento_list_command() {
+    cat $ZTMDIR/completion/magento_cli;
+}
+_magento_autocomplete() {
+	compadd $(magento_list_command)
+}
+compdef _magento_autocomplete m2 magento
