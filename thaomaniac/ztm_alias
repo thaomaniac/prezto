@@ -8,8 +8,7 @@ if type "colorls" > /dev/null; then
 fi
 
 # Switch php version
-switchphp()
-{
+switchphp() {
     if [ -z "$1" ]; then
         sudo update-alternatives --config php
     else
@@ -19,15 +18,14 @@ switchphp()
 }
 
 # Restart service
-res_service(){
+res_service() {
     sudo service $1 restart
 }
 
 ##----------GIT command----------##
 
 # git commit with branch name as prefix
-commit()
-{
+commit() {
     if [ "$vcs_info_msg_0_" = "" ]; then
         echo "\e[1;31mUnknown branch name\e[0m"
         return 1;
@@ -41,8 +39,7 @@ commit()
 }
 
 # git push --set-upstream origin <branch>
-pushsetupstream()
-{
+pushsetupstream() {
     if [ "$vcs_info_msg_0_" = "" ]; then
         echo "\e[1;31mUnknown branch name\e[0m"
         return 1;
@@ -79,8 +76,7 @@ alias sdc='eval $(phpVer) bin/magento setup:di:compile'
 alias ssd='eval $(phpVer) bin/magento setup:static-content:deploy'
 alias seup='eval $(phpVer) bin/magento setup:upgrade'
 
-phpVer()
-{
+phpVer() {
     if [ ! -f "$PWD/bin/magento" ]; then
         echo "php"
         return
