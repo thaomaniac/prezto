@@ -3,9 +3,12 @@ compdef _service res_service
 
 # magento
 magento_list_command() {
+    #m2 --raw --no-ansi list | sed "s/[[:space:]].*//g"
     cat $ZTMDIR/completion/magento_cli;
 }
 _magento_autocomplete() {
-	compadd $(magento_list_command)
+    if [[ -s "$PWD/bin/magento" ]]; then
+        compadd $(magento_list_command)
+    fi
 }
-compdef _magento_autocomplete m2 magento
+compdef _magento_autocomplete m2 bin/magento
