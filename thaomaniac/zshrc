@@ -58,3 +58,15 @@ unsetopt correct
 
 ## Show timestamp
 #RPROMPT='%D{%H:%M:%S}'$RPROMPT
+
+# Print a newline before the prompt
+function preexec() {
+  action="$1"
+}
+function precmd() {
+    #cur_command=$(history -1 | tr -s " " | cut -d ' ' -f 3-)
+    if [[ -n $action && $action != "clear" ]]; then
+        echo
+        unset action
+    fi
+}
