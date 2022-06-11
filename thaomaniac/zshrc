@@ -71,10 +71,10 @@ function precmd() {
     fi
     if [ -z "$SHOW_HELLO" ]; then
         SHOW_HELLO=1
-        printHello
+        _printHello
     fi
 }
-function printHello() {
+function _printHello() {
 #     echo ' ________ _____  ____  __  ______   _  _________  _____'
 #     echo '/_  __/ // / _ |/ __ \/  |/  / _ | / |/ /  _/ _ |/ ___/'
 #     echo ' / / / _  / __ / /_/ / /|_/ / __ |/    // // __ / /__'
