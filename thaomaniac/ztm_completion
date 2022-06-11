@@ -1,5 +1,5 @@
 # alias restart service
-compdef _service res_service
+compdef _service restart-service
 
 # magento
 magento_list_command() {

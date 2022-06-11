@@ -18,7 +18,7 @@ switchphp() {
 }
 
 # Restart service
-res_service() {
+restart-service() {
     sudo service $1 restart
 }
 
