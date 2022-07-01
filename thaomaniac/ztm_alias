@@ -34,7 +34,8 @@ commit() {
         echo "\033[1mSyntax error\033[0m: Only 1 parameter can be passed!"
         return 1;
     else
-        git commit -m "$vcs_info_msg_0_: $1"
+       local msg=$(echo $1 | cut -c1 | tr a-z A-Z)$(echo $1 | cut -c2-)
+        git commit -m "$vcs_info_msg_0_: $msg"
     fi
 }
 
