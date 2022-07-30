@@ -25,16 +25,17 @@ restart-service() {
 ##----------GIT command----------##
 
 # git commit with branch name as prefix
+# commit message must be enclosed in quotation marks
 commit() {
-    if [ "$vcs_info_msg_0_" = "" ]; then
+    if [ -z $vcs_info_msg_0_ ]; then
         echo "\e[1;31mUnknown branch name\e[0m"
         return 1;
     fi
-    if [ -n "$2" ]; then
-        echo "\033[1mSyntax error\033[0m: Only 1 parameter can be passed!"
+    if [[ $# != 1 ]]; then
+        echo "\e[1;31mTypeScript Error:\e[0m Expected 1 arguments, but got $#!"
         return 1;
     else
-       local msg=$(echo $1 | cut -c1 | tr a-z A-Z)$(echo $1 | cut -c2-)
+        local msg=$(echo $1 | cut -c1 | tr a-z A-Z)$(echo $1 | cut -c2-)
         git commit -m "$vcs_info_msg_0_: $msg"
     fi
 }
@@ -47,7 +48,6 @@ pushsetupstream() {
     else
         git push --set-upstream origin $vcs_info_msg_0_
     fi
-    
 }
 
 ##----------END git command----------##
