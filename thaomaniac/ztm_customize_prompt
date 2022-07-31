@@ -1,10 +1,12 @@
+#!/usr/bin/env zsh
+
 ###----------Agnoster theme - Rewrite Prompt components----------###
 
 # End the prompt, closing any open segments
 prompt_end() {
   if [[ -n $CURRENT_BG ]]; then
-    if [[ $PWD != $HOME ]]; then
-      print -n "%{%k%F{green}%}$prompt_newline❯%B_%b"
+    if [[ $PWD != "$HOME" ]]; then
+      print -n "%{%k%F{green}%}\n❯%B_%b"
     else
       print -n "%{%k%F{green}%}❯%B_%b"
     fi
@@ -17,7 +19,7 @@ prompt_end() {
 
 # Dir: current working directory
 prompt_dir() {
-    if [[ $PWD != $HOME ]]; then
+    if [[ $PWD != "$HOME" ]]; then
         prompt_segment default default '%~'
     fi
   #prompt_segment default default ' %4c'
@@ -26,7 +28,7 @@ prompt_dir() {
 # Context: user@hostname (who am I and where am I)
 prompt_context() {
   if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-      if [[ $PWD != $HOME ]]; then
+      if [[ $PWD != "$HOME" ]]; then
         START_ICON=''
         load_dir_icon
         prompt_segment default green "%(!.%{%F{white}%}.)$START_ICON "
