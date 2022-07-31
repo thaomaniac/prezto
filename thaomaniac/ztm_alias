@@ -60,14 +60,6 @@ alias ci='php spark'
 
 ##----------Magento command----------##
 
-#alias m2='php bin/magento'
-
-#alias sdc='php bin/magento setup:di:compile'
-#alias cc='php bin/magento cache:clean'
-#alias cf='php bin/magento cache:flush'
-#alias ssd='php bin/magento setup:static-content:deploy'
-#alias seup='php bin/magento setup:upgrade'
-
 #---Alias with Nginx multiple php
 m2() {
 	eval $(phpVer) bin/magento "$@"
