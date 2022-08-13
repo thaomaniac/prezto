@@ -19,8 +19,8 @@ if [[ -s "$ZTMDIR/ztm_alias" ]]; then
 fi
 
 #----- Load Rewrite Theme -----#
-if [[ -s "$ZTMDIR/ztm_customize_prompt" ]]; then
-  source "$ZTMDIR/ztm_customize_prompt"
+if [[ -s "$ZTMDIR/ztm_theme_agnoster" ]]; then
+  source "$ZTMDIR/ztm_theme_agnoster"
 fi
 
 #----- Load Custom Completion -----#
