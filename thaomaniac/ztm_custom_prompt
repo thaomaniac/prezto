@@ -1,0 +1,26 @@
+#!/usr/bin/env zsh
+
+# Print a newline before the prompt
+function preexec() {
+  action="$1"
+}
+function precmd() {
+  #cur_command=$(history -1 | tr -s " " | cut -d ' ' -f 3-)
+  if [[ -n $action && $action != "clear" ]]; then
+    echo
+    unset action
+  fi
+  if [ -z "$SHOW_HELLO" ]; then
+    SHOW_HELLO=1
+    _printHello
+  fi
+}
+function _printHello() {
+  echo ' ______ __ __ ___   ____   __  ___ ___    _  __ ____ ___   _____'
+  echo '/_  __// // // _ | / __ \ /  |/  // _ |  / |/ //  _// _ | / ___/'
+  echo ' / /  / _  // __ |/ /_/ // /|_/ // __ | /    /_/ / / __ |/ /__'
+  echo '/_/  /_//_//_/ |_|\____//_/  /_//_/ |_|/_/|_//___//_/ |_|\___/'
+
+  # shellcheck disable=SC2028
+  echo "\nHello \033[1mVu Thanh Thao\033[0m - $(date '+%Y-%m-%d %H:%M:%S') - $(lsb_release -sd)\n"
+}
