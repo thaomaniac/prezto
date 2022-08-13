@@ -29,7 +29,10 @@ restart-service() {
 # git commit with branch name as prefix
 # commit message must be enclosed in quotation marks
 commit() {
-  if [ -z "$vcs_info_msg_0_" ]; then
+  # local branch=$(git-branch-current 2> /dev/null);
+  # shellcheck disable=SC2154
+  local branch=$vcs_info_msg_0_
+  if [ -z "$branch" ]; then
     echo "\e[1;31mUnknown branch name\e[0m"
     return 1
   fi
@@ -37,18 +40,20 @@ commit() {
     echo "\e[1;31mTypeScript Error:\e[0m Expected 1 arguments, but got $#!"
     return 1
   else
-    local msg=$(echo "$1" | cut -c1 | tr a-z A-Z)$(echo "$1" | cut -c2-)
-    git commit -m "$vcs_info_msg_0_: $msg"
+    # shellcheck disable=SC2155
+    local msg=$(echo "$1" | cut -c1 | command tr a-z A-Z)$(echo "$1" | cut -c2-)
+    git commit -m "$branch: $msg"
   fi
 }
 
 # git push --set-upstream origin <branch>
 pushSetUpstream() {
-  if [ "$vcs_info_msg_0_" = "" ]; then
+  local branch=$vcs_info_msg_0_
+  if [ -z "$branch" ]; then
     echo "\e[1;31mUnknown branch name\e[0m"
     return 1
   else
-    git push --set-upstream origin "$vcs_info_msg_0_"
+    git push --set-upstream origin "$branch"
   fi
 }
 
