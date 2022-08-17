@@ -69,12 +69,6 @@ prompt_git() {
     if is_dirty; then
       color=yellow
       ref="${ref} $PLUSMINUS"
-
-      countAll="$(git status -s -u | wc -l)"
-      [[ $countAll -ne 0 ]] && ref="$ref$countAll%f"
-      # countTracked="$(git status -s -uno | wc -l)"
-      # countAdded="$(git diff --cached --numstat | wc -l)"
-      # [[ $countAdded -ne 0 ]] && ref="$ref $countAdded"
     else
       color=green
       ref="%B${ref}%b \U2714"
