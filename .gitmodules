@@ -29,3 +29,6 @@
 	path = modules/prompt/external/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
 	shallow = true
+[submodule "thaomaniac/plugins/zsh-background-notify"]
+	path = thaomaniac/plugins/zsh-background-notify
+	url = https://github.com/t413/zsh-background-notify.git
