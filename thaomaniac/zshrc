@@ -33,6 +33,11 @@ if [[ -s "$ZTMDIR/ztm_custom_prompt" ]]; then
   source "$ZTMDIR/ztm_custom_prompt"
 fi
 
+#----- load bg notify -----#
+if [[ -s "$ZTMDIR/plugins/zsh-background-notify/bgnotify.plugin.zsh" ]]; then
+  source "$ZTMDIR/plugins/zsh-background-notify/bgnotify.plugin.zsh"
+fi
+
 # remove background color 'ls'
 export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
 
