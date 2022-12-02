@@ -6,7 +6,7 @@ alias autoclean='sudo apt-get autoclean'
 
 #alias colorls command
 if type "colorls" >/dev/null; then
-  alias ls='colorls'
+  alias ls='colorls --indicator-style=none'
 fi
 
 # Switch php version
