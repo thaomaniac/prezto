@@ -78,6 +78,19 @@ alias sdc='eval $(_phpVer) bin/magento setup:di:compile'
 alias ssd='eval $(_phpVer) bin/magento setup:static-content:deploy'
 alias seup='eval $(_phpVer) bin/magento setup:upgrade'
 
+# deploy production mode
+m2-deploy-prod() {
+  phpVersion=$(_phpVer)
+  echo '----- deploying production mode -----'
+  $phpVersion bin/magento maintenance:enable &&
+    $phpVersion bin/magento setup:upgrade &&
+    $phpVersion bin/magento deploy:mode:set production -s &&
+    $phpVersion bin/magento setup:di:compile &&
+    $phpVersion bin/magento setup:static-content:deploy en_US vi_VN -f -j 4 &&
+    $phpVersion bin/magento cache:flush &&
+    $phpVersion bin/magento maintenance:disable
+}
+
 _phpVer() {
   if [ ! -f "$PWD/bin/magento" ]; then
     echo "php"
