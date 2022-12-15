@@ -3,10 +3,29 @@
 # alias restart service
 compdef _service restart-service
 
+loadMagentoFilePathCompletion() {
+  rootDir="$ZTMDIR/completion/magento"
+  fileDir="$rootDir$PWD"
+  filePath="$fileDir/m2_cli"
+}
+m2-gen-cli-completion() {
+  if [[ -s "$PWD/bin/magento" ]]; then
+    loadMagentoFilePathCompletion
+    rm -f "$filePath" &&
+      mkdir "$fileDir" &&
+      m2 --raw --no-ansi list | sed "s/[[:space:]].*//g" >"$filePath"
+  fi
+}
+
 # magento
 _magento_list_command() {
   #  m2 --raw --no-ansi list | sed "s/[[:space:]].*//g"
-  cat "$ZTMDIR"/completion/magento_cli
+  loadMagentoFilePathCompletion
+  if [[ -s $filePath ]]; then
+    cat "$filePath"
+  else
+    cat "$ZTMDIR"/completion/magento_cli
+  fi
 }
 _magento_autocomplete() {
   if [[ -s "$PWD/bin/magento" ]]; then
