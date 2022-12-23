@@ -4,15 +4,15 @@
 compdef _service restart-service
 
 loadMagentoFilePathCompletion() {
-  rootDir="$ZTMDIR/completion/magento"
+  rootDir="$ZTMDIR/local/magento/completion"
   fileDir="$rootDir$PWD"
   filePath="$fileDir/m2_cli"
 }
 m2-gen-cli-completion() {
   if [[ -s "$PWD/bin/magento" ]]; then
     loadMagentoFilePathCompletion
-    rm -f "$filePath" &&
-      mkdir "$fileDir" &&
+    rm -f "$filePath" && #nocorrect rm -i
+      mkdir "$fileDir" && #nocorrect /bin/mkdir -p
       m2 --raw --no-ansi list | sed "s/[[:space:]].*//g" >"$filePath"
   fi
 }
@@ -23,8 +23,6 @@ _magento_list_command() {
   loadMagentoFilePathCompletion
   if [[ -s $filePath ]]; then
     cat "$filePath"
-  else
-    cat "$ZTMDIR"/completion/magento_cli
   fi
 }
 _magento_autocomplete() {
