@@ -30,6 +30,8 @@ _phpVer() {
 }
 # get version from saved file
 _m2phpVerFile() {
+  [[ ! -f "$PWD/bin/magento" ]] && echo 'php' && return
+
   local fileDir="$ZTMDIR/local/magento/"
   local file="$fileDir/php_version"
   local phpVer
@@ -37,16 +39,16 @@ _m2phpVerFile() {
 
   if [ ! -f "$file" ]; then
     mkdir "$fileDir" && touch "$file"
+  else
+    # shellcheck disable=SC2162
+    while IFS=':' read -A args; do
+      ((line++))
+      if [[ ${args[1]} == "$PWD" ]]; then
+        phpVer="${args[2]}"
+        break
+      fi
+    done <"$file"
   fi
-
-  # shellcheck disable=SC2162
-  while IFS=':' read -A args; do
-    ((line++))
-    if [[ ${args[1]} == "$PWD" ]]; then
-      phpVer="${args[2]}"
-      break
-    fi
-  done <"$file"
 
   if [ -z "$phpVer" ]; then
     phpVer=$(_m2checkPhpVer)
@@ -60,9 +62,7 @@ _m2phpVerFile() {
 }
 
 m2-gen-php-version() {
-  if [ -f "$PWD/bin/magento" ]; then
-    _m2phpVerFile 'update'
-  fi
+  _m2phpVerFile 'update'
 }
 
 _m2checkPhpVer() {
