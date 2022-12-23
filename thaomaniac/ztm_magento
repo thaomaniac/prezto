@@ -1,0 +1,139 @@
+#!/usr/bin/env zsh
+##----------Magento command----------##
+
+#---Alias with Nginx multiple php
+m2() {
+  # shellcheck disable=SC2046
+  eval $(_phpVer) bin/magento "$@"
+}
+alias cc='eval $(_phpVer) bin/magento cache:clean'
+alias cf='eval $(_phpVer) bin/magento cache:flush'
+alias sdc='eval $(_phpVer) bin/magento setup:di:compile'
+alias ssd='eval $(_phpVer) bin/magento setup:static-content:deploy'
+alias seup='eval $(_phpVer) bin/magento setup:upgrade'
+
+# deploy production mode
+m2-deploy-prod() {
+  phpVersion=$(_phpVer)
+  echo '----- deploying production mode -----'
+  $phpVersion bin/magento maintenance:enable &&
+    $phpVersion bin/magento setup:upgrade &&
+    $phpVersion bin/magento deploy:mode:set production -s &&
+    $phpVersion bin/magento setup:di:compile &&
+    $phpVersion bin/magento setup:static-content:deploy en_US vi_VN -f -j 4 &&
+    $phpVersion bin/magento cache:flush &&
+    $phpVersion bin/magento maintenance:disable
+}
+
+_phpVer() {
+  _m2phpVerFile
+}
+# get version from saved file
+_m2phpVerFile() {
+  local fileDir="$ZTMDIR/local/magento/"
+  local file="$fileDir/php_version"
+  local phpVer
+  local line=0
+
+  if [ ! -f "$file" ]; then
+    mkdir "$fileDir" && touch "$file"
+  fi
+
+  # shellcheck disable=SC2162
+  while IFS=':' read -A args; do
+    ((line++))
+    if [[ ${args[1]} == "$PWD" ]]; then
+      phpVer="${args[2]}"
+      break
+    fi
+  done <"$file"
+
+  if [ -z "$phpVer" ]; then
+    phpVer=$(_m2checkPhpVer)
+    echo "$PWD:$phpVer" >>"$file"
+  elif [[ -n $1 && $1 == "update" ]]; then
+    phpVer=$(_m2checkPhpVer)
+    sed -i "$line s|.*|$PWD:$phpVer|" "$file"
+    #sed -i "$line c$PWD:$phpVer" $file
+  fi
+  echo "$phpVer"
+}
+
+m2-gen-php-version() {
+  if [ -f "$PWD/bin/magento" ]; then
+    _m2phpVerFile 'update'
+  fi
+}
+
+_m2checkPhpVer() {
+  if [ ! -f "$PWD/bin/magento" ]; then
+    echo "php"
+    return
+  fi
+
+  for ver in '' 7.4 7.3 8.1; do
+    magentoVer=$(php$ver bin/magento -V | tail -n 1 | awk '{print $NF}' | cut -c1-5) >/dev/null 2>&1
+    if [[ $magentoVer =~ ^[0-9]+(\.[0-9]+){2,3}$ ]]; then
+      break
+    fi
+  done
+
+  case $magentoVer in
+  '2.3.5' | '2.3.6')
+    echo 'php7.3'
+    ;;
+  '2.3.7' | '2.4.0' | '2.4.1' | '2.4.2' | '2.4.3')
+    echo 'php7.4'
+    ;;
+  '2.4.4')
+    echo 'php8.1'
+    ;;
+  *)
+    echo 'php'
+    ;;
+  esac
+}
+
+##----------Completion----------##
+
+loadMagentoFilePathCompletion() {
+  rootDir="$ZTMDIR/local/magento/completion"
+  fileDir="$rootDir$PWD"
+  filePath="$fileDir/m2_cli"
+}
+m2-gen-cli-completion() {
+  if [[ -s "$PWD/bin/magento" ]]; then
+    loadMagentoFilePathCompletion
+    rm -f "$filePath" && #nocorrect rm -i
+      mkdir "$fileDir" && #nocorrect /bin/mkdir -p
+      m2 --raw --no-ansi list | sed "s/[[:space:]].*//g" >"$filePath"
+  fi
+}
+
+# magento
+_magento_list_command() {
+  #  m2 --raw --no-ansi list | sed "s/[[:space:]].*//g"
+  loadMagentoFilePathCompletion
+  if [[ -s $filePath ]]; then
+    cat "$filePath"
+  fi
+}
+_magento_autocomplete() {
+  if [[ -s "$PWD/bin/magento" ]]; then
+    # shellcheck disable=SC2046
+    compadd $(_magento_list_command)
+  fi
+}
+compdef _magento_autocomplete m2 bin/magento
+
+#compdef n98-magerun2.phar
+_n98_magerun2_get_command_list() {
+  n98-magerun2.phar --raw --no-ansi list | sed "s/[[:space:]].*//g"
+}
+
+_n98_magerun2() {
+  # shellcheck disable=SC2046
+  compadd $(_n98_magerun2_get_command_list)
+}
+
+compdef _n98_magerun2 n98-magerun2.phar

@@ -13,19 +13,19 @@ fi
 
 # Customize to your needs...
 
-#----- Load Alias Command -----#
-if [[ -s "$ZTMDIR/ztm_alias" ]]; then
-  source "$ZTMDIR/ztm_alias"
-fi
-
 #----- Load Rewrite Theme -----#
 if [[ -s "$ZTMDIR/ztm_theme_agnoster" ]]; then
   source "$ZTMDIR/ztm_theme_agnoster"
 fi
 
-#----- Load Custom Completion -----#
-if [[ -s "$ZTMDIR/ztm_completion" ]]; then
-  source "$ZTMDIR/ztm_completion"
+#----- Load Alias Command -----#
+if [[ -s "$ZTMDIR/ztm_alias" ]]; then
+  source "$ZTMDIR/ztm_alias"
+fi
+
+#----- Load Magento Command -----#
+if [[ -s "$ZTMDIR/ztm_magento" ]]; then
+  source "$ZTMDIR/ztm_magento"
 fi
 
 #----- Load Custom Function -----#
