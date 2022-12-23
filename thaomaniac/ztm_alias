@@ -126,7 +126,9 @@ _m2phpVerFile() {
 }
 
 m2-gen-php-version() {
-  _m2phpVerFile 'update'
+  if [ -f "$PWD/bin/magento" ]; then
+    _m2phpVerFile 'update'
+  fi
 }
 
 _m2checkPhpVer() {
