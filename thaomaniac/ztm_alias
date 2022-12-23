@@ -92,6 +92,44 @@ m2-deploy-prod() {
 }
 
 _phpVer() {
+  _m2phpVerFile
+}
+# get version from saved file
+_m2phpVerFile() {
+  local fileDir="$ZTMDIR/local/magento/"
+  local file="$fileDir/php_version"
+  local phpVer
+  local line=0
+
+  if [ ! -f "$file" ]; then
+    mkdir "$fileDir" && touch "$file"
+  fi
+
+  # shellcheck disable=SC2162
+  while IFS=':' read -A args; do
+    ((line++))
+    if [[ ${args[1]} == "$PWD" ]]; then
+      phpVer="${args[2]}"
+      break
+    fi
+  done <"$file"
+
+  if [ -z "$phpVer" ]; then
+    phpVer=$(_m2checkPhpVer)
+    echo "$PWD:$phpVer" >>"$file"
+  elif [[ -n $1 && $1 == "update" ]]; then
+    phpVer=$(_m2checkPhpVer)
+    sed -i "$line s|.*|$PWD:$phpVer|" "$file"
+    #sed -i "$line c$PWD:$phpVer" $file
+  fi
+  echo "$phpVer"
+}
+
+m2-gen-php-version() {
+  _m2phpVerFile 'update'
+}
+
+_m2checkPhpVer() {
   if [ ! -f "$PWD/bin/magento" ]; then
     echo "php"
     return
