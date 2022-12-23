@@ -12,26 +12,17 @@ if [[ -s "$ZTMDIR/init.zsh" ]]; then
 fi
 
 # Customize to your needs...
-
-#----- Load Rewrite Theme -----#
-if [[ -s "$ZTMDIR/ztm_theme_agnoster" ]]; then
-  source "$ZTMDIR/ztm_theme_agnoster"
-fi
-
-#----- Load Alias Command -----#
-if [[ -s "$ZTMDIR/ztm_alias" ]]; then
-  source "$ZTMDIR/ztm_alias"
-fi
-
-#----- Load Magento Command -----#
-if [[ -s "$ZTMDIR/ztm_magento" ]]; then
-  source "$ZTMDIR/ztm_magento"
-fi
-
-#----- Load Custom Function -----#
-if [[ -s "$ZTMDIR/ztm_custom_prompt" ]]; then
-  source "$ZTMDIR/ztm_custom_prompt"
-fi
+tmCustomFile=(
+  'ztm_theme_agnoster' # Rewrite Theme
+  'ztm_alias' # Alias Command
+  'ztm_magento' # Magento Command
+  'ztm_custom_prompt' # Custom Function
+)
+for file in $tmCustomFile; do
+  if [[ -s $ZTMDIR/$file ]]; then
+    source $ZTMDIR/$file
+  fi
+done
 
 #----- load bg notify -----#
 if [[ -s "$ZTMDIR/plugins/zsh-background-notify/bgnotify.plugin.zsh" ]]; then
