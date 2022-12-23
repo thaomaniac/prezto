@@ -30,14 +30,14 @@ prompt_context() {
   if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
     if [[ $PWD != "$HOME" ]]; then
       START_ICON=''
-      load_dir_icon
+      _load_dir_icon
       prompt_segment default green "%(!.%{%F{white}%}.)$START_ICON "
     fi
   fi
 }
 
 # Icon for begin the prompt with Nerd Font
-load_dir_icon() {
+_load_dir_icon() {
   if [[ $PWD/ == /home/* ]]; then
     START_ICON="\uf015" #
     return 1
