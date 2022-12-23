@@ -1,8 +1,5 @@
 #!/usr/bin/env zsh
 
-# alias restart service
-compdef _service restart-service
-
 loadMagentoFilePathCompletion() {
   rootDir="$ZTMDIR/local/magento/completion"
   fileDir="$rootDir$PWD"
