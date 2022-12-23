@@ -96,14 +96,14 @@ _m2checkPhpVer() {
 
 ##----------Completion----------##
 
-loadMagentoFilePathCompletion() {
+_loadMagentoFilePathCompletion() {
   rootDir="$ZTMDIR/local/magento/completion"
   fileDir="$rootDir$PWD"
   filePath="$fileDir/m2_cli"
 }
 m2-gen-cli-completion() {
   if [[ -s "$PWD/bin/magento" ]]; then
-    loadMagentoFilePathCompletion
+    _loadMagentoFilePathCompletion
     rm -f "$filePath" && #nocorrect rm -i
       mkdir "$fileDir" && #nocorrect /bin/mkdir -p
       m2 --raw --no-ansi list | sed "s/[[:space:]].*//g" >"$filePath"
@@ -113,7 +113,7 @@ m2-gen-cli-completion() {
 # magento
 _magento_list_command() {
   #  m2 --raw --no-ansi list | sed "s/[[:space:]].*//g"
-  loadMagentoFilePathCompletion
+  _loadMagentoFilePathCompletion
   if [[ -s $filePath ]]; then
     cat "$filePath"
   fi
