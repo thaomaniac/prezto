@@ -28,9 +28,9 @@ function _printHello() {
 add-zsh-hook precmd _printHello
 
 # override bgnotify_formatted
-  function bgnotify_formatted { ## args: (exit_status, command, elapsed_seconds)
-    elapsed="$(( $3 % 60 ))s"
-    (( $3 >= 60 )) && elapsed="$((( $3 % 3600) / 60 ))m $elapsed"
-    (( $3 >= 3600 )) && elapsed="$(( $3 / 3600 ))h $elapsed"
-    [ $1 -eq 0 ] && notify-send -i org.gnome.Terminal "Success ($elapsed)✔" "$2" || notify-send -i org.gnome.Terminal "FAIL ($elapsed)✘" "$2"
-  }
+function bgnotify_formatted() { ## args: (exit_status, command, elapsed_seconds)
+  elapsed="$(($3 % 60))s"
+  (($3 >= 60)) && elapsed="$((($3 % 3600) / 60))m $elapsed"
+  (($3 >= 3600)) && elapsed="$(($3 / 3600))h $elapsed"
+  [ $1 -eq 0 ] && notify-send -i org.gnome.Terminal "Success ($elapsed)✔" "$2" || notify-send -i org.gnome.Terminal "FAIL ($elapsed)✘" "$2"
+}
