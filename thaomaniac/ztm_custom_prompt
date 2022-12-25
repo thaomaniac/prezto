@@ -1,21 +1,22 @@
 #!/usr/bin/env zsh
 
 # Print a newline before the prompt
-function preexec() {
-  action="$1"
+_print_new_line_preexec() {
+  pnl_last_cmd="$1"
 }
-function precmd() {
+_print_new_line_precmd() {
   #cur_command=$(history -1 | tr -s " " | cut -d ' ' -f 3-)
-  if [[ -n $action && $action != "clear" ]]; then
+  if [[ -n $pnl_last_cmd && $pnl_last_cmd != "clear" ]]; then
     echo
-    unset action
-  fi
-  if [ -z "$SHOW_HELLO" ]; then
-    SHOW_HELLO=1
-    _printHello
+    unset pnl_lastcmd
   fi
 }
+add-zsh-hook preexec _print_new_line_preexec
+add-zsh-hook precmd _print_new_line_precmd
+
 function _printHello() {
+  [[ -n "$SHOW_HELLO" ]] && return
+  SHOW_HELLO=1
   echo ' ______ __ __ ___   ____   __  ___ ___    _  __ ____ ___   _____'
   echo '/_  __// // // _ | / __ \ /  |/  // _ |  / |/ //  _// _ | / ___/'
   echo ' / /  / _  // __ |/ /_/ // /|_/ // __ | /    /_/ / / __ |/ /__'
@@ -24,6 +25,7 @@ function _printHello() {
   # shellcheck disable=SC2028
   echo "\nHello \033[1mVu Thanh Thao\033[0m - $(date '+%Y-%m-%d %H:%M:%S') - $(lsb_release -sd)\n"
 }
+add-zsh-hook precmd _printHello
 
 # override bgnotify_formatted
   function bgnotify_formatted { ## args: (exit_status, command, elapsed_seconds)
