@@ -6,7 +6,7 @@ _print_new_line_preexec() {
 }
 _print_new_line_precmd() {
   [[ -n $pnl_last_cmd && $pnl_last_cmd != "clear" && $pnl_last_cmd != "reset" ]] && echo
-  unset pnl_lastcmd
+  unset pnl_last_cmd
 }
 add-zsh-hook preexec _print_new_line_preexec
 add-zsh-hook precmd _print_new_line_precmd
