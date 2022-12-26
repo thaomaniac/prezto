@@ -5,11 +5,8 @@ _print_new_line_preexec() {
   pnl_last_cmd="$1"
 }
 _print_new_line_precmd() {
-  #cur_command=$(history -1 | tr -s " " | cut -d ' ' -f 3-)
-  if [[ -n $pnl_last_cmd && $pnl_last_cmd != "clear" ]]; then
-    echo
-    unset pnl_lastcmd
-  fi
+  [[ -n $pnl_last_cmd && $pnl_last_cmd != "clear" && $pnl_last_cmd != "reset" ]] && echo
+  unset pnl_lastcmd
 }
 add-zsh-hook preexec _print_new_line_preexec
 add-zsh-hook precmd _print_new_line_precmd
