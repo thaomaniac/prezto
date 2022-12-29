@@ -59,17 +59,6 @@ commit() {
   fi
 }
 
-# git push --set-upstream origin <branch>
-pushSetUpstream() {
-  local branch=$vcs_info_msg_0_
-  if [ -z "$branch" ]; then
-    echo "\e[1;31mUnknown branch name\e[0m"
-    return 1
-  else
-    git push --set-upstream origin "$branch"
-  fi
-}
-
 ##----------END git command----------##
 
 ##----------CodeIgniter command----------##
