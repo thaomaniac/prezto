@@ -1,16 +1,5 @@
 #!/usr/bin/env zsh
 
-# Print a newline before the prompt
-_print_new_line_preexec() {
-  pnl_last_cmd="$1"
-}
-_print_new_line_precmd() {
-  [[ -n $pnl_last_cmd && $pnl_last_cmd != "clear" && $pnl_last_cmd != "reset" ]] && echo
-  unset pnl_last_cmd
-}
-add-zsh-hook preexec _print_new_line_preexec
-add-zsh-hook precmd _print_new_line_precmd
-
 function _printHello() {
   [[ -n "$SHOW_HELLO" ]] && return
   SHOW_HELLO=1
