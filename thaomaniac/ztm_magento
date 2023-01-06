@@ -85,11 +85,8 @@ _m2checkPhpVer() {
   '2.3.7' | '2.4.0' | '2.4.1' | '2.4.2' | '2.4.3')
     echo 'php7.4'
     ;;
-  '2.4.4')
-    echo 'php8.1'
-    ;;
   *)
-    echo 'php'
+    echo 'php8.1'
     ;;
   esac
 }
