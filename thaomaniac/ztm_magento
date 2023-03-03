@@ -11,6 +11,7 @@ alias cf='eval $(_phpVer) bin/magento cache:flush'
 alias sdc='eval $(_phpVer) bin/magento setup:di:compile'
 alias ssd='eval $(_phpVer) bin/magento setup:static-content:deploy'
 alias seup='eval $(_phpVer) bin/magento setup:upgrade'
+alias sup='eval $(_phpVer) bin/magento setup:upgrade'
 
 # deploy production mode
 m2-deploy-prod() {
@@ -117,6 +118,38 @@ _magento_list_command() {
 }
 _magento_autocomplete() {
   if [[ -s "$PWD/bin/magento" ]]; then
+    # shellcheck disable=SC2154
+    for word in "${words[@]:1}"; do
+      if [[ $word != -* ]]; then
+        curW=$word
+        break
+      fi
+    done
+    case "$curW" in
+    module:enable)
+      # shellcheck disable=SC2046
+      compadd $(m2 module:status --disabled)
+      return
+      ;;
+    module:disable)
+      # shellcheck disable=SC2046
+      compadd $(m2 module:status --enabled)
+      return
+      ;;
+    indexer:reindex)
+      # shellcheck disable=SC2046
+      compadd $(m2 indexer:info | sed "s/[[:space:]].*//g")
+      return
+      ;;
+    deploy:mode:set)
+      compadd developer production default maintenance
+      return
+      ;;
+    admin:user:create)
+      compadd - --admin-user --admin-password --admin-email --admin-firstname --admin-lastname --magento-init-params
+      return
+      ;;
+    esac
     # shellcheck disable=SC2046
     compadd $(_magento_list_command)
   fi
