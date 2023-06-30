@@ -42,9 +42,8 @@ compdef _service restart-service
 # git commit with branch name as prefix
 # commit message must be enclosed in quotation marks
 commit() {
-  # local branch=$(git-branch-current 2> /dev/null);
-  # shellcheck disable=SC2154
-  local branch=$vcs_info_msg_0_
+  # shellcheck disable=SC2155
+  local branch=$(git-branch-current 2>/dev/null)
   if [ -z "$branch" ]; then
     echo "\e[1;31mUnknown branch name\e[0m"
     return 1
