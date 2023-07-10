@@ -17,6 +17,7 @@ tmCustomFile=(
   'ztm_alias' # Alias Command
   'ztm_magento' # Magento Command
   'ztm_custom_prompt' # Custom Function
+  'local/custom_function' #local (not in git)
 )
 for file in $tmCustomFile; do
   if [[ -s $ZTMDIR/$file ]]; then
