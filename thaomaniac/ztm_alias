@@ -4,6 +4,15 @@ alias update='sudo apt-get update'
 alias autoremove='sudo apt-get autoremove'
 alias autoclean='sudo apt-get autoclean'
 
+# Upgrade package
+upgrade() {
+  if [ -z "$1" ]; then
+    echo "\e[1;31mMust specify 1 package\e[0m"
+    return 1
+  fi
+  sudo apt-get --only-upgrade install "$1"
+}
+
 #alias colorls command
 if type "colorls" >/dev/null; then
   alias ls='colorls --indicator-style=none'
