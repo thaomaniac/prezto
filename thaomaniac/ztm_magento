@@ -1,6 +1,16 @@
 #!/usr/bin/env zsh
 ##----------Magento command----------##
 
+# composer with magento
+composer() {
+  local composerPath=/usr/local/bin/composer
+  if [ -s "$PWD/bin/magento" ]; then
+    eval "$(_phpVer)" $composerPath "$@"
+  else
+    $composerPath "$@"
+  fi
+}
+
 #---Alias with Nginx multiple php
 m2() {
   # shellcheck disable=SC2046
@@ -142,7 +152,7 @@ _magento_autocomplete() {
       return
       ;;
     deploy:mode:set)
-      compadd developer production default maintenance
+      compadd developer production default
       return
       ;;
     admin:user:create)
