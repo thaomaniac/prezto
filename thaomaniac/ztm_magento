@@ -1,10 +1,19 @@
 #!/usr/bin/env zsh
 ##----------Magento command----------##
 
+# check is current directory is magento
+ism2dir() {
+  if [ -f "$PWD/bin/magento" ]; then
+    echo 1
+  else
+    echo 0
+  fi
+}
+
 # composer with magento
 composer() {
   local composerPath=/usr/local/bin/composer
-  if [ -s "$PWD/bin/magento" ]; then
+  if ism2dir; then
     eval "$(_phpVer)" $composerPath "$@"
   else
     $composerPath "$@"
@@ -41,7 +50,7 @@ _phpVer() {
 }
 # get version from saved file
 _m2phpVerFile() {
-  [[ ! -f "$PWD/bin/magento" ]] && echo 'php' && return
+  ! ism2dir && echo 'php' && return
 
   local fileDir="$ZTMDIR/local/magento/"
   local file="$fileDir/php_version"
@@ -77,7 +86,7 @@ m2-gen-php-version() {
 }
 
 _m2checkPhpVer() {
-  if [ ! -f "$PWD/bin/magento" ]; then
+  if ! ism2dir; then
     echo "php"
     return
   fi
@@ -110,7 +119,7 @@ _loadMagentoFilePathCompletion() {
   filePath="$fileDir/m2_cli"
 }
 m2-gen-cli-completion() {
-  if [[ -s "$PWD/bin/magento" ]]; then
+  if ! ism2dir; then
     _loadMagentoFilePathCompletion
     rm -f "$filePath" && #nocorrect rm -i
       mkdir "$fileDir" && #nocorrect /bin/mkdir -p
@@ -127,7 +136,8 @@ _magento_list_command() {
   fi
 }
 _magento_autocomplete() {
-  if [[ -s "$PWD/bin/magento" ]]; then
+  if ism2dir; then
+    echo 1
     # shellcheck disable=SC2154
     for word in "${words[@]:1}"; do
       if [[ $word != -* ]]; then
