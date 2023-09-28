@@ -4,10 +4,12 @@
 # check is current directory is magento
 ism2dir() {
   if [ -f "$PWD/bin/magento" ]; then
-    echo 1
-  else
-    echo 0
+    return 0 #true
   fi
+  return 1 # false
+}
+_print_msg_not_m2_dir() {
+  echo "Current directory is not the magento folder"
 }
 
 # composer with magento
@@ -82,7 +84,12 @@ _m2phpVerFile() {
 }
 
 m2-gen-php-version() {
-  _m2phpVerFile 'update'
+  if ism2dir; then
+    _m2phpVerFile 'update'
+  else
+    _print_msg_not_m2_dir
+    return 1
+  fi
 }
 
 _m2checkPhpVer() {
@@ -117,13 +124,17 @@ _loadMagentoFilePathCompletion() {
   rootDir="$ZTMDIR/local/magento/completion"
   fileDir="$rootDir$PWD"
   filePath="$fileDir/m2_cli"
+  n98filePath="$fileDir/n98_cli"
 }
 m2-gen-cli-completion() {
-  if ! ism2dir; then
+  if ism2dir; then
     _loadMagentoFilePathCompletion
     rm -f "$filePath" && #nocorrect rm -i
       mkdir "$fileDir" && #nocorrect /bin/mkdir -p
       m2 --raw --no-ansi list | sed "s/[[:space:]].*//g" >"$filePath"
+  else
+    _print_msg_not_m2_dir
+    return 1
   fi
 }
 
@@ -176,14 +187,44 @@ _magento_autocomplete() {
 }
 compdef _magento_autocomplete m2 bin/magento
 
-#compdef n98-magerun2.phar
-_n98_magerun2_get_command_list() {
-  n98-magerun2.phar --raw --no-ansi list | sed "s/[[:space:]].*//g"
-}
-
-_n98_magerun2() {
+# netz98 magerun CLI tools for Magento 2 https://github.com/netz98/n98-magerun2
+n98() {
   # shellcheck disable=SC2046
-  compadd $(_n98_magerun2_get_command_list)
+  eval $(_phpVer) /usr/local/bin/n98-magerun2.phar "$@"
 }
 
-compdef _n98_magerun2 n98-magerun2.phar
+n98-m2-gen-cli-completion() {
+  _loadMagentoFilePathCompletion
+  if ism2dir; then
+    rm -f "$n98filePath" && #nocorrect rm -i
+      mkdir "$fileDir" && #nocorrect /bin/mkdir -p
+      n98 --raw --no-ansi list | sed "s/[[:space:]].*//g" >"$n98filePath"
+  else
+    rm -f "$rootDir/n98_cli" && #nocorrect rm -i
+      mkdir "$rootDir" && #nocorrect /bin/mkdir -p
+      n98 --raw --no-ansi list | sed "s/[[:space:]].*//g" >"$rootDir/n98_cli"
+    echo -ne "\033[1mNotice:\033[0m " && _print_msg_not_m2_dir
+  fi
+}
+
+#compdef n98-magerun2.phar
+_n98_magerun2_list_command() {
+  #  n98 --raw --no-ansi list | sed "s/[[:space:]].*//g"
+  _loadMagentoFilePathCompletion
+  if ism2dir; then
+    if [[ -s "$n98filePath" ]]; then
+      cat "$n98filePath"
+    fi
+  else
+    if [[ -s "$rootDir/n98_cli" ]]; then
+      cat "$rootDir/n98_cli"
+    fi
+  fi
+}
+
+_n98_magerun2_autocomplete() {
+  # shellcheck disable=SC2046
+  compadd $(_n98_magerun2_list_command)
+}
+compdef _n98_magerun2_autocomplete n98 n98-magerun2.phar
+##----------END Completion----------##
