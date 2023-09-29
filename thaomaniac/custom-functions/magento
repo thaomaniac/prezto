@@ -9,7 +9,7 @@ ism2dir() {
   return 1 # false
 }
 _print_msg_not_m2_dir() {
-  echo "Current directory is not the magento folder"
+  echo "\033[1mNotice:\033[0m Current directory is not the magento folder"
 }
 
 # composer with magento
@@ -148,7 +148,6 @@ _magento_list_command() {
 }
 _magento_autocomplete() {
   if ism2dir; then
-    echo 1
     # shellcheck disable=SC2154
     for word in "${words[@]:1}"; do
       if [[ $word != -* ]]; then
@@ -189,8 +188,7 @@ compdef _magento_autocomplete m2 bin/magento
 
 # netz98 magerun CLI tools for Magento 2 https://github.com/netz98/n98-magerun2
 n98() {
-  # shellcheck disable=SC2046
-  eval $(_phpVer) /usr/local/bin/n98-magerun2.phar "$@"
+  eval "$(_phpVer)" /usr/local/bin/n98-magerun2.phar "$@"
 }
 
 n98-m2-gen-cli-completion() {
@@ -203,7 +201,7 @@ n98-m2-gen-cli-completion() {
     rm -f "$rootDir/n98_cli" && #nocorrect rm -i
       mkdir "$rootDir" && #nocorrect /bin/mkdir -p
       n98 --raw --no-ansi list | sed "s/[[:space:]].*//g;/^$/d" >"$rootDir/n98_cli"
-    echo -ne "\033[1mNotice:\033[0m " && _print_msg_not_m2_dir
+    _print_msg_not_m2_dir
   fi
 }
 

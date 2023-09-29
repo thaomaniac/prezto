@@ -173,7 +173,7 @@ ZTMDIR=${0:h}
 if [[ -s "$ZTMDIR/zpreztorc" ]]; then
   source "$ZTMDIR/zpreztorc"
 fi
-# End TM
+# End ThaoManiac
 # Disable color and theme in dumb terminals.
 if [[ "$TERM" == 'dumb' ]]; then
   zstyle ':prezto:*:*' color 'no'
