@@ -198,18 +198,17 @@ n98-m2-gen-cli-completion() {
   if ism2dir; then
     rm -f "$n98filePath" && #nocorrect rm -i
       mkdir "$fileDir" && #nocorrect /bin/mkdir -p
-      n98 --raw --no-ansi list | sed "s/[[:space:]].*//g" >"$n98filePath"
+      n98 --raw --no-ansi list | sed "s/[[:space:]].*//g;/^$/d" >"$n98filePath"
   else
     rm -f "$rootDir/n98_cli" && #nocorrect rm -i
       mkdir "$rootDir" && #nocorrect /bin/mkdir -p
-      n98 --raw --no-ansi list | sed "s/[[:space:]].*//g" >"$rootDir/n98_cli"
+      n98 --raw --no-ansi list | sed "s/[[:space:]].*//g;/^$/d" >"$rootDir/n98_cli"
     echo -ne "\033[1mNotice:\033[0m " && _print_msg_not_m2_dir
   fi
 }
 
 #compdef n98-magerun2.phar
 _n98_magerun2_list_command() {
-  #  n98 --raw --no-ansi list | sed "s/[[:space:]].*//g"
   _loadMagentoFilePathCompletion
   if ism2dir; then
     if [[ -s "$n98filePath" ]]; then
