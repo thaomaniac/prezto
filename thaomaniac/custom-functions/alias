@@ -75,5 +75,9 @@ alias ci='php spark'
 
 ##----------END CodeIgniter command----------##
 
-# Reset 30 days trial phpstorm
-alias phpstorm_reset='rm -f ~/.config/JetBrains/PhpStorm*/options/other.xml;rm -rf ~/.config/JetBrains/PhpStorm*/eval;rm -rf ~/.java/.userPrefs'
+# Reset trial phpstorm for old version <= 2021.*
+phpstorm_reset() {
+  rm -f ~/.config/JetBrains/PhpStorm*/options/other.xml
+  rm -rf ~/.config/JetBrains/PhpStorm*/eval
+  rm -rf ~/.java/.userPrefs
+}
