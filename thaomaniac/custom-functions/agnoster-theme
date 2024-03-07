@@ -44,16 +44,18 @@ _load_dir_icon() {
   elif [[ -s "$PWD/bin/magento" ]]; then
     START_ICON="\ue740" #
     return 1
+  elif [[ -s "$PWD/docker-compose.yml" ]]; then
+    START_ICON="\uf308" #
+    return 1
   elif [[ -s "$PWD/spark" && -d "$PWD/vendor/codeigniter4" ]]; then
     START_ICON="\ue780" #
     return 1
+  elif [[ ! -w $PWD ]]; then
+    local -i w=$?
+    START_ICON="\uf023" #
   else
     START_ICON="\uf31b" #
     #START_ICON="\uf07c" #
-  fi
-  if [[ ! -w $PWD ]]; then
-    local -i w=$?
-    START_ICON="\uf023" #
   fi
 }
 #➜
