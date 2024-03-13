@@ -1,0 +1,47 @@
+#!/usr/bin/env zsh
+# check is current directory is docker compose service
+isDockerDir() {
+  if [ -f "$PWD/docker-compose.yml" ]; then
+    return 0 #true
+  fi
+  return 1 # false
+}
+alias dk=docker
+function dkc() {
+  docker compose "$@"
+}
+
+_docker_compose_completion() {
+  if isDockerDir; then
+#    # get first command
+#    for word in "${words[@]:1}"; do
+#      if [[ $word != -* ]]; then #ignore words starting with a dash -
+#        curW=$word
+#        break
+#      fi
+#    done
+
+    # get last command
+    for (( i=${#words[@]}-1; i>0; i-- )); do
+      word="${words[$i]}"
+      if [[ -n $word && $word != -* ]]; then
+        curW=$word
+        break
+      fi
+    done
+    # local wordsCount=$(($(IFS=' '; set -- $words; echo $#) - 1));
+    case "$curW" in
+      exec )
+      docker compose ps --format "{{.Service}} {{.ID}}" | while read -r line; do
+        service_name=${line%% *}
+        container_id=${line#* }
+        compadd -V "$line" "$service_name"
+      done
+      return
+      ;;
+    esac
+      # shellcheck disable=SC2046
+      return
+  fi
+}
+compdef _docker_compose_completion dkc
