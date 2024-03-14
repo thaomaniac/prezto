@@ -46,6 +46,8 @@ restart-service() {
   sudo service "$1" restart
 }
 compdef _service restart-service
+# compdef restart-service=service
+
 ##----------GIT command----------##
 
 # git commit with branch name as prefix
