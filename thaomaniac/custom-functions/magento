@@ -27,12 +27,12 @@ m2() {
   # shellcheck disable=SC2046
   eval $(_phpVer) bin/magento "$@"
 }
-alias cc='eval $(_phpVer) bin/magento cache:clean'
-alias cf='eval $(_phpVer) bin/magento cache:flush'
-alias sdc='eval $(_phpVer) bin/magento setup:di:compile'
-alias ssd='eval $(_phpVer) bin/magento setup:static-content:deploy'
-alias seup='eval $(_phpVer) bin/magento setup:upgrade'
-alias sup='eval $(_phpVer) bin/magento setup:upgrade'
+alias cc='m2 cache:clean'
+alias cf='m2 cache:flush'
+alias sdc='m2 setup:di:compile'
+alias ssd='m2 setup:static-content:deploy'
+alias seup='m2 setup:upgrade'
+alias sup='m2 setup:upgrade'
 
 # deploy production mode
 m2-deploy-prod() {
@@ -112,6 +112,9 @@ _m2checkPhpVer() {
   '2.3.7' | '2.4.0' | '2.4.1' | '2.4.2' | '2.4.3')
     echo 'php7.4'
     ;;
+    '2.4.6')
+      echo 'php8.2'
+      ;;
   *)
     echo 'php8.1'
     ;;

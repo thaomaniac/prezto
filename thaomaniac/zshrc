@@ -7,7 +7,16 @@ if [[ -s "$ZTMDIR/init.zsh" ]]; then
 fi
 
 # load custom command file
-for file in $ZTMDIR/custom-functions/*; do
+tmCustomFile=(
+  'agnoster-theme' # Rewrite Theme
+  'alias' # Alias Command
+  'magento' # Magento Command
+  'docker' # Docker command
+  'zshprompt' # Custom Function
+)
+# for file in $ZTMDIR/custom-functions/*; do
+for file in $tmCustomFile; do
+  file=$ZTMDIR/custom-functions/$file
   if [[ -f $file ]]; then
     source $file
   fi

@@ -1,11 +1,28 @@
 #!/usr/bin/env zsh
-# check is current directory is docker compose service
-isDockerDir() {
-  if [ -f "$PWD/docker-compose.yml" ]; then
-    return 0 #true
+#check the current directory is docker or is in the directory containing docker
+isDockerComposeDir() {
+  if [[ -n $1 && $1 == "parent" ]]; then
+    local current_directory
+    current_directory=$(pwd)
+    while [[ "$current_directory" != "/" ]]; do
+      if [ -f "$current_directory/docker-compose.yml" ]; then
+        return 0 #true
+      fi
+      current_directory=$(dirname "$current_directory")
+    done
+    return 1 # false
+  else
+    if [ -f "$PWD/docker-compose.yml" ]; then
+      return 0 #true
+    fi
+    return 1 # false
   fi
-  return 1 # false
 }
+
+isDockerDir(){
+  isDockerComposeDir 'parent'
+}
+
 alias dk=docker
 function dkc() {
   docker compose "$@"
@@ -45,3 +62,19 @@ _docker_compose_completion() {
   fi
 }
 compdef _docker_compose_completion dkc
+
+##---Magento command with docker
+_m2-docker() {
+  docker compose exec -T php bash -c "bin/magento $*"
+}
+_m2-normal() {
+  eval "$(_phpVer)" bin/magento "$@"
+}
+
+m2() {
+  if isDockerDir; then
+    _m2-docker "$@"
+  else
+    _m2-normal "$@"
+  fi
+}
