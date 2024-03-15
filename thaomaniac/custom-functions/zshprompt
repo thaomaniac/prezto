@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-function _greeting-tm() {
+function _poweredBy() {
 #  echo 'IF9fX19fXyBfXyBfXyBfX18gICBfX19fICAgX18gIF9fXyBfX18gICAgXyAgX18gX19fXyBfX18g' | base64 -d
 #  echo 'ICBfX19fXwovXyAgX18vLyAvLyAvLyBfIHwgLyBfXyBcIC8gIHwvICAvLyBfIHwgIC8gfC8gLy8g' | base64 -d
 #  echo 'IF8vLyBfIHwgLyBfX18vCiAvIC8gIC8gXyAgLy8gX18gfC8gL18vIC8vIC98Xy8gLy8gX18gfCAv' | base64 -d
@@ -12,6 +12,9 @@ function _greeting-tm() {
   echo 'IC8gLyBfICAvIF9fIC8gL18vIC8gL3xfLyAvIF9fIHwvICAgIC8vIC8vIF9fIC8gL19fICAKL18v' | base64 -d
   echo 'IC9fLy9fL18vIHxfXF9fX18vXy8gIC9fL18vIHxfL18vfF8vX19fL18vIHxfXF9fXy8gIAo=' | base64 -d
   # http://patorjk.com/software/taag/#p=display&h=2&f=Small%20Slant&t=THAOMANIAC
+}
+function _greeting-tm() {
+  _poweredBy
   # shellcheck disable=SC2028
   echo "\n\033[1;5m$USER\033[0m - $(date '+%Y-%m-%d %H:%M:%S') \e[5m-\e[0m $(lsb_release -sd)\n"
 }
