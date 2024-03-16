@@ -2,31 +2,33 @@
 
 ## Installation
 
-01. Launch Zsh:
+1. Launch Zsh:
 
-    ```console
-    zsh
-    ```
+   ```console
+   zsh
+   ```
 
-02. Clone the repository:
+2. Clone the repository:
 
-    ```console
-    git clone --recursive git@gitlab.com:thaomaniac/zprezto.git "${ZDOTDIR:-$HOME}/.zprezto"
-    ```
+   ```console
+   git clone --recursive git@gitlab.com:thaomaniac/zprezto.git "${ZDOTDIR:-$HOME}/.zprezto"
+   ```
 
-03. Create a new Zsh configuration by copying/linking the Zsh configuration files provided:
+3. Create a new Zsh configuration by copying/linking the Zsh configuration files provided:
 
-    ```console
-    ln -s "${ZDOTDIR:-$HOME}"/.zprezto/thaomaniac/zshrc "${ZDOTDIR:-$HOME}/.zshrc"
-    ```
+   ```console
+   ln -s "${ZDOTDIR:-$HOME}"/.zprezto/thaomaniac/zshrc "${ZDOTDIR:-$HOME}/.zshrc"
+   ```
 
-04. Download and install fonts.
-
+4. Download and install fonts.
     - Powerline fonts
         ```bash
         sudo apt-get install powerline fonts-powerline
         ```
     - [Nerd Fonts](https://www.nerdfonts.com/)
 
-        Recommend using _Overpass Regular Nerd Font Complete_:
-        [Download](https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Overpass/Non-Mono/Regular/complete/Overpass%20Regular%20Nerd%20Font%20Complete.otf)
+      Recommend using _Overpass Nerd Font, Regular_
+
+### External
+
+1. Using [Color LS](https://gitlab.com/thaomaniac/colorls)
