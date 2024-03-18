@@ -50,3 +50,6 @@ unsetopt correct
 #   echo -ne '\e[5 q'
 #}
 #precmd_functions+=(_fix_cursor)
+
+# use a 256 colour terminal
+export TERM=xterm-256color
