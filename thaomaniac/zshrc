@@ -1,4 +1,9 @@
-#!/usr/bin/env zsh
+#
+# Executes commands at the start of an interactive session.
+#
+# Authors:
+#   Sorin Ionescu <sorin.ionescu@gmail.com>
+#
 
 ZTMDIR=${ZDOTDIR:-$HOME}/.zprezto/thaomaniac
 # Source Prezto.
@@ -6,6 +11,9 @@ if [[ -s "$ZTMDIR/init.zsh" ]]; then
   source "$ZTMDIR/init.zsh"
 fi
 
+# Customize to your needs...
+
+#!/usr/bin/env zsh
 # load custom command file
 tmCustomFile=(
   'agnoster-theme' # Rewrite Theme
