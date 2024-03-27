@@ -15,7 +15,7 @@ upgrade() {
 
 #alias colorls command
 if type "colorls" >/dev/null; then
-  alias ls='colorls --indicator-style=none'
+  alias ls='colorls --indicator-style=none --color=never'
 fi
 
 # Switch php version
