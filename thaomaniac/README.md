@@ -11,7 +11,7 @@
 2. Clone the repository:
 
    ```console
-   git clone --recursive git@gitlab.com:thaomaniac/zprezto.git "${ZDOTDIR:-$HOME}/.zprezto"
+   git clone --recursive git@gitlab.com:thaomaniac/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
    ```
 
 3. Create a new Zsh configuration by copying/linking the Zsh configuration files provided:
