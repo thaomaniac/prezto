@@ -41,9 +41,10 @@ zstyle ':prezto:load' pmodule \
   'history-substring-search' \
   'prompt'\
   'git'\
-  'syntax-highlighting'\
-  'autosuggestions'\
-  'command-not-found'\
+  'syntax-highlighting' \
+  'autosuggestions' \
+  'command-not-found' \
+  'docker' \
 
 #
 # Autosuggestions
