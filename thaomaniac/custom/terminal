@@ -28,6 +28,64 @@ _set-window-title-tm() {
 _set-window-title-tm
 add-zsh-hook chpwd _set-window-title-tm
 
+# Elapsed and execution time display for commands
+# https://gist.github.com/knadh/123bca5cfdae8645db750bfb49cb44b0
+function elapsed_preexec() {
+  if [[ "$SHOW_ELAPSED" == 1 ]]; then
+    epLastCmd="$1"
+    [[ -n $epLastCmd && $epLastCmd != "clear" && $epLastCmd != "reset" ]] && \
+    elapsedTimer=$(date +%s%3N)
+  fi
+}
+elapsed_precmd() {
+  if [[ "$SHOW_ELAPSED" && "$elapsedTimer" ]]; then
+    local -r now=$(date +%s%3N)
+    local -rF d_ms=$(($now - $elapsedTimer))
+    local -rF d_s=$((d_ms / 1000))
+    local -rF ms=$((d_ms % 1000))
+    local -rF s=$((d_s % 60))
+    local -ri m=$(((d_s / 60) % 60))
+    local -ri h=$((d_s / 3600))
+    if ((h > 0)); then
+      printf -v elapsed '%ih%im%is' ${h} ${m} ${s}
+    elif ((m > 0)); then
+      printf -v elapsed '%im%is' ${m} ${s}
+    elif ((s >= 1)); then
+      printf -v elapsed '%.2fs' ${s}
+    else
+      printf -v elapsed '%ims' ${ms}
+    fi
+    RPROMPT="${elapsed}"
+    if [ "$SHOW_TIMESTAMP" ]; then
+      RPROMPT+="|%D{%H:%M:%S}"
+    fi
+    unset elapsedTimer
+    unset elapsed
+  elif [ "$SHOW_TIMESTAMP" ]; then
+    RPROMPT="%D{%H:%M:%S}"
+  else
+    unset RPROMPT
+  fi
+}
+showTimePrompt() {
+  unset SHOW_TIMESTAMP
+  unset SHOW_ELAPSED
+  if [[ -z $1 ]]; then
+    SHOW_TIMESTAMP=1;
+    SHOW_ELAPSED=1;
+  else
+    if [[ $1 == 1 ]]; then
+     SHOW_ELAPSED=1;
+    fi
+    if [[ $2 == 1 ]]; then
+      SHOW_TIMESTAMP=1;
+    fi
+  fi
+}
+add-zsh-hook preexec elapsed_preexec
+add-zsh-hook precmd elapsed_precmd
+# END Elapsed and execution time
+
 # override bgnotify_formatted
 function bgnotify_formatted() { ## args: (exit_status, command, elapsed_seconds)
   elapsed="$(($3 % 60))s"
