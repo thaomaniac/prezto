@@ -7,20 +7,21 @@ if [[ -s "$ZTMDIR/init.zsh" ]]; then
 fi
 
 # load custom command file
-tmCustomFile=(
-  'agnoster-theme' # Rewrite Theme
-  'alias' # Alias Command
-  'magento' # Magento Command
-  'docker' # Docker command
-  'zshprompt' # Custom Function
+typeset -a TM_CUSTOM_FILE=(
+  agnoster # Override Agnoster theme
+  alias # Alias & custom function
+  magento # Magento CLI
+  docker # Docker CLI
+  terminal # Custom terminal function
 )
-# for file in $ZTMDIR/custom-functions/*; do
-for file in $tmCustomFile; do
-  file=$ZTMDIR/custom-functions/$file
+
+for file in "${TM_CUSTOM_FILE[@]}"; do
+  file=$ZTMDIR/custom/$file
   if [[ -f $file ]]; then
     source $file
   fi
 done
+
 # load local file (not in git)
 for file in $ZTMDIR/local/*; do
   if [[ -f $file ]]; then
@@ -37,7 +38,7 @@ fi
 export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
 
 #remove autocompletion color
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS_xx}
+zstyle ':completion:*:default' list-colors
 
 # Disable correct command
 unsetopt correct

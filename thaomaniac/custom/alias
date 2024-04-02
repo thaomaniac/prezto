@@ -15,7 +15,7 @@ upgrade() {
 
 #alias colorls command
 if type "colorls" >/dev/null; then
-  alias ls='colorls --indicator-style=none'
+  alias ls='colorls --indicator-style=none --color=never'
 fi
 
 # Switch php version
@@ -71,15 +71,9 @@ commit() {
 
 ##----------END git command----------##
 
-##----------CodeIgniter command----------##
-
-alias ci='php spark'
-
-##----------END CodeIgniter command----------##
-
 # Reset trial phpstorm for old version <= 2021.*
-phpstorm_reset() {
-  rm -f ~/.config/JetBrains/PhpStorm*/options/other.xml
-  rm -rf ~/.config/JetBrains/PhpStorm*/eval
-  rm -rf ~/.java/.userPrefs
-}
+#phpstorm_reset() {
+#  rm -f ~/.config/JetBrains/PhpStorm*/options/other.xml
+#  rm -rf ~/.config/JetBrains/PhpStorm*/eval
+#  rm -rf ~/.java/.userPrefs
+#}
