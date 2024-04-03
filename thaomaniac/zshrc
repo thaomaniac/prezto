@@ -3,62 +3,10 @@
 #
 # Authors:
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
+# Customizer:
+#   Vu Thanh Thao <thaomaniac@gmail.com>
 #
-
-ZTMDIR=${ZDOTDIR:-$HOME}/.zprezto/thaomaniac
 # Source Prezto.
-if [[ -s "$ZTMDIR/init.zsh" ]]; then
-  source "$ZTMDIR/init.zsh"
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/thaomaniac/custom/initialize" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/thaomaniac/custom/initialize"
 fi
-
-# Customize to your needs...
-
-#!/usr/bin/env zsh
-# load custom command file
-typeset -a TM_CUSTOM_FILE=(
-  agnoster # Override Agnoster theme
-  alias # Alias & custom function
-  magento # Magento CLI
-  docker # Docker CLI
-  terminal # Custom terminal function
-)
-
-for file in "${TM_CUSTOM_FILE[@]}"; do
-  file=$ZTMDIR/custom/$file
-  if [[ -f $file ]]; then
-    source $file
-  fi
-done
-
-# load local file (not in git)
-for file in $ZTMDIR/local/*; do
-  if [[ -f $file ]]; then
-    source $file
-  fi
-done
-
-#----- load bg notify -----#
-if [[ -s "$ZTMDIR/plugins/zsh-background-notify/bgnotify.plugin.zsh" ]]; then
-  source "$ZTMDIR/plugins/zsh-background-notify/bgnotify.plugin.zsh"
-fi
-
-# remove background color 'ls'
-export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
-
-#remove autocompletion color
-zstyle ':completion:*:default' list-colors
-
-# Disable correct command
-unsetopt correct
-
-# Disable confirm a rm *
-# setopt rmstarsilent
-
-# Fix cursor style to I-Beam
-#_fix_cursor() {
-#   echo -ne '\e[5 q'
-#}
-#precmd_functions+=(_fix_cursor)
-
-# use a 256 colour terminal
-export TERM=xterm-256color
