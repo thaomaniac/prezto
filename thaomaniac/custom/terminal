@@ -63,12 +63,15 @@ elapsed_precmd() {
     unset elapsed
   elif [ "$SHOW_TIMESTAMP" ]; then
     RPROMPT="%D{%H:%M:%S}"
+  else
+    unset RPROMPT
   fi
 }
 showTimePrompt() {
   unset SHOW_TIMESTAMP
   unset SHOW_ELAPSED
   unset RPROMPT
+  unset elapsedTimer
 
   if [[ -z $1 ]]; then
     SHOW_TIMESTAMP=1
