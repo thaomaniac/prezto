@@ -12,16 +12,6 @@ _print_msg_not_m2_dir() {
   echo "\033[1mNotice:\033[0m Current directory is not the magento folder"
 }
 
-# composer with magento
-composer() {
-  local composerPath=/usr/local/bin/composer
-  if ism2dir; then
-    eval "$(_phpVer)" $composerPath "$@"
-  else
-    $composerPath "$@"
-  fi
-}
-
 #---Alias with Nginx multiple php
 m2() {
   # shellcheck disable=SC2046
