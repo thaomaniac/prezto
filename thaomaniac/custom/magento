@@ -53,6 +53,7 @@ _m2phpVerFile() {
     mkdir "$fileDir" && touch "$file"
   else
     # shellcheck disable=SC2162
+    # lastDir=${PWD##*/}
     while IFS=':' read -A args; do
       ((line++))
       if [[ ${args[1]} == "$PWD" ]]; then

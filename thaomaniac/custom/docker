@@ -6,6 +6,7 @@ isDockerComposeDir() {
     current_directory=$(pwd)
     while [[ "$current_directory" != "/" ]]; do
       if [ -f "$current_directory/docker-compose.yml" ]; then
+        docker_dir=$current_directory;
         return 0 #true
       fi
       current_directory=$(dirname "$current_directory")
@@ -34,9 +35,38 @@ compadd  tes1 test2 test3
 compdef _docker_compose_completion dkc
 
 ##---Magento command with docker
-_m2-docker() {
-  docker compose exec -T php bash -c "bin/magento $*"
+_m2DockerPhpVerFile() {
+  local file="$docker_dir/.php-map"
+  local phpVer='php'
+
+  if [ -f "$file" ]; then
+    while IFS=: read -r folder php_version; do
+        if [[ "$PWD" == *"/$folder" ]]; then
+            phpVer=$php_version
+            break
+        fi
+    done < "$file"
+  fi
+  echo "$phpVer"
 }
+_isMultiDocker() {
+  if [ -f "$docker_dir/.php-map" ]; then
+    return 0 #true
+  fi
+  return 1 # false
+}
+_m2-docker() {
+  if _isMultiDocker; then
+    ! ism2dir && _print_msg_not_m2_dir && return 1
+    local phpService=$(_m2DockerPhpVerFile)
+    local lastDir=${PWD##*/}
+    local working_dir="$lastDir"
+    docker compose exec -T "$phpService" bash -c "cd $working_dir && bin/magento $*"
+  else
+    docker compose exec -T php bash -c "bin/magento $*"
+  fi
+}
+
 _m2-normal() {
   eval "$(_phpVer)" bin/magento "$@"
 }
