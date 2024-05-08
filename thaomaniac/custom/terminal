@@ -16,13 +16,19 @@ _greeting-tm
 
 _set-window-title-tm() {
   local title
-  if [[ $PWD == /var/www/* ]]; then
-    # parts=(${(@s:/:)PWD});title="${parts[3]}"
-    local lastPwd=${PWD#*/var/www/}
-    title=${lastPwd%%/*}
-  else
-    title="${PWD/#$HOME/~}"
-  fi
+  local trimPwdPatterns=(
+  /var/www/*/www/
+  /var/www/
+  )
+  title="${PWD/#$HOME/~}"
+  for dir in "${trimPwdPatterns[@]}"; do
+    if [[ $PWD == $dir* ]]; then
+      local trimPwd=${PWD#*$dir} #remove $dir at the beginning
+#      title=${trimPwd%%/*} #remove all except the first folder
+      title=$trimPwd
+      break
+    fi
+  done
   printf '\e]2;%s\a' "$title"
 }
 _set-window-title-tm
