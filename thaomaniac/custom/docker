@@ -29,10 +29,10 @@ function dkc() {
   docker compose "$@"
 }
 
-_docker_compose_completion() {
-compadd  tes1 test2 test3
-}
-compdef _docker_compose_completion dkc
+#_docker_compose_completion() {
+#compadd  tes1 test2 test3
+#}
+#compdef _docker_compose_completion dkc
 
 ##---Magento command with docker
 _m2DockerPhpVerFile() {
@@ -60,7 +60,7 @@ _m2-docker() {
     ! ism2dir && _print_msg_not_m2_dir && return 1
     local phpService=$(_m2DockerPhpVerFile)
     local lastDir=${PWD##*/}
-    local working_dir="$lastDir"
+    local working_dir="/var/www/$lastDir"
     docker compose exec -T "$phpService" bash -c "cd $working_dir && bin/magento $*"
   else
     docker compose exec -T php bash -c "bin/magento $*"
