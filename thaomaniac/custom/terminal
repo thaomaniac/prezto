@@ -21,9 +21,9 @@ _set-window-title-tm() {
   /var/www/
   )
   title="${PWD/#$HOME/~}"
-  for dir in "${trimPwdPatterns[@]}"; do
-    if [[ $PWD == $dir* ]]; then
-      local trimPwd=${PWD#*$dir} #remove $dir at the beginning
+  for regex in "${trimPwdPatterns[@]}"; do
+    if [[ $PWD == $regex* ]]; then
+      local trimPwd=${PWD#*$regex} #remove $dir at the beginning
 #      title=${trimPwd%%/*} #remove all except the first folder
       title=$trimPwd
       break
