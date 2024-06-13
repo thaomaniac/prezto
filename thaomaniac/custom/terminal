@@ -19,7 +19,7 @@ _set-window-title-tm() {
   local trimPwdPatterns=(
   /var/www/*/www/
   /var/www/
-  )
+  ) 2> /dev/null
   title="${PWD/#$HOME/~}"
   for regex in "${trimPwdPatterns[@]}"; do
     if [[ $PWD == $regex* ]]; then
