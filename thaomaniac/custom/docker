@@ -6,7 +6,7 @@ isDockerComposeDir() {
     current_directory=$(pwd)
     while [[ "$current_directory" != "/" ]]; do
       if [ -f "$current_directory/docker-compose.yml" ]; then
-        docker_dir=$current_directory;
+        docker_dir=$current_directory
         return 0 #true
       fi
       current_directory=$(dirname "$current_directory")
@@ -20,7 +20,7 @@ isDockerComposeDir() {
   fi
 }
 
-isDockerDir(){
+isDockerDir() {
   isDockerComposeDir 'parent'
 }
 
@@ -28,6 +28,58 @@ unalias dkc >/dev/null 2>&1
 function dkc() {
   docker compose "$@"
 }
+
+dkc-script() {
+  if isDockerDir; then
+    scriptCommand=$1
+    shift
+    "$docker_dir/scripts/$scriptCommand" "$@"
+  else
+    echo 'Current directory is not a docker environment, abort action!'
+    return 1
+  fi
+}
+
+# Define completion function for dkc-script
+_dkc-script_completion() {
+  if ! isDockerDir; then
+    return
+  fi
+  local commands_xdebug
+  commands_xdebug=(
+    'enable:Enable Xdebug'
+    'on:Enable Xdebug'
+    'disable:Disable Xdebug'
+    'off:Disable Xdebug'
+    'status:Status Xdebug'
+  )
+
+  local commands_database
+  commands_database=(
+    'create:Create database'
+    'drop:Drop database'
+    'import:Import database'
+    'export:Export database'
+  )
+
+  if [[ ${words[2]} == "xdebug" ]]; then
+    if [[ ${#words[@]} -eq 3 ]]; then
+      _describe 'xdebug command' commands_xdebug
+    fi
+  elif [[ ${words[2]} == "database" ]]; then
+    if [[ ${#words[@]} -eq 3 ]]; then
+      _describe 'database command' commands_database
+    fi
+  else
+    local commands
+    commands=(
+      'xdebug:Xdebug command description'
+      'database:Database command description'
+    )
+    _describe 'command' commands
+  fi
+}
+compdef _dkc-script_completion dkc-script
 
 #_docker_compose_completion() {
 #compadd  tes1 test2 test3
@@ -41,20 +93,22 @@ _m2DockerPhpVerFile() {
 
   if [ -f "$file" ]; then
     while IFS=: read -r folder php_version; do
-        if [[ "$PWD" == *"/$folder" ]]; then
-            phpVer=$php_version
-            break
-        fi
-    done < "$file"
+      if [[ "$PWD" == *"/$folder" ]]; then
+        phpVer=$php_version
+        break
+      fi
+    done <"$file"
   fi
   echo "$phpVer"
 }
+
 _isMultiDocker() {
   if [ -f "$docker_dir/.php-map" ]; then
     return 0 #true
   fi
   return 1 # false
 }
+
 _m2-docker() {
   if _isMultiDocker; then
     ! ism2dir && _print_msg_not_m2_dir && return 1
@@ -63,7 +117,9 @@ _m2-docker() {
     local working_dir="/var/www/$lastDir"
     docker compose exec -T "$phpService" bash -c "cd $working_dir && bin/magento $*"
   else
-    docker compose exec -T php bash -c "bin/magento $*"
+    local phpService='php'
+    local working_dir="/var/www/html"
+    docker compose exec -T "$phpService" bash -c "cd $working_dir && bin/magento $*"
   fi
 }
 
