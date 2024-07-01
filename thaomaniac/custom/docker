@@ -63,7 +63,7 @@ _dkc-script_completion() {
   )
 
   if [[ ${words[2]} == "xdebug" ]]; then
-    if [[ ${#words[@]} -eq 3 ]]; then
+    if [[ ${#words[@]} -eq 3 || ${words[3]} == php* ]]; then
       _describe 'xdebug command' commands_xdebug
     fi
   elif [[ ${words[2]} == "database" ]]; then
