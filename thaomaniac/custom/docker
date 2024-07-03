@@ -1,28 +1,30 @@
 #!/usr/bin/env zsh
+
 #check the current directory is docker or is in the directory containing docker
-isDockerComposeDir() {
-  if [[ -n $1 && $1 == "parent" ]]; then
+# 0 true; 1 false
+# shellcheck disable=SC2120
+isDockerDir() {
+  if [[ -z $IS_DOCKER_DIR || $1 == "-f" ]]; then
+    IS_DOCKER_DIR=1
     local current_directory
     current_directory=$(pwd)
     while [[ "$current_directory" != "/" ]]; do
       if [ -f "$current_directory/docker-compose.yml" ]; then
-        docker_dir=$current_directory
-        return 0 #true
+        DOCKER_ROOT=$current_directory
+        IS_DOCKER_DIR=0
       fi
       current_directory=$(dirname "$current_directory")
     done
-    return 1 # false
-  else
-    if [ -f "$PWD/docker-compose.yml" ]; then
-      return 0 #true
-    fi
-    return 1 # false
   fi
+
+  return "$IS_DOCKER_DIR"
 }
 
-isDockerDir() {
-  isDockerComposeDir 'parent'
+_check_docker_dir() {
+  unset IS_DOCKER_DIR
+  isDockerDir
 }
+add-zsh-hook chpwd _check_docker_dir
 
 unalias dkc >/dev/null 2>&1
 function dkc() {
@@ -33,7 +35,7 @@ dkc-script() {
   if isDockerDir; then
     scriptCommand=$1
     shift
-    "$docker_dir/scripts/$scriptCommand" "$@"
+    "$DOCKER_ROOT/scripts/$scriptCommand" "$@"
   else
     echo 'Current directory is not a docker environment, abort action!'
     return 1
@@ -88,7 +90,7 @@ compdef _dkc-script_completion dkc-script
 
 ##---Magento command with docker
 _m2DockerPhpVerFile() {
-  local file="$docker_dir/.php-map"
+  local file="$DOCKER_ROOT/.php-map"
   local phpVer='php'
 
   if [ -f "$file" ]; then
@@ -103,7 +105,7 @@ _m2DockerPhpVerFile() {
 }
 
 _isMultiDocker() {
-  if [ -f "$docker_dir/.php-map" ]; then
+  if [ -f "$DOCKER_ROOT/.php-map" ]; then
     return 0 #true
   fi
   return 1 # false
