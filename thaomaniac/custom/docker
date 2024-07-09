@@ -116,11 +116,13 @@ _m2-docker() {
     ! ism2dir && _print_msg_not_m2_dir && return 1
     local phpService=$(_m2DockerPhpVerFile)
     local lastDir=${PWD##*/}
-    local working_dir="/var/www/$lastDir"
+    local workingDir=$(docker inspect --format='{{.Config.WorkingDir}}' "$(docker compose ps -q "$phpService")")
+    local working_dir="$workingDir/$lastDir"
     docker compose exec -T "$phpService" bash -c "cd $working_dir && bin/magento $*"
   else
     local phpService='php'
-    local working_dir="/var/www/html"
+    local workingDir=$(docker inspect --format='{{.Config.WorkingDir}}' "$(docker compose ps -q "$phpService")")
+    local working_dir="$workingDir"
     docker compose exec -T "$phpService" bash -c "cd $working_dir && bin/magento $*"
   fi
 }
