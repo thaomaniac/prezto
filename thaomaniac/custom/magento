@@ -28,13 +28,13 @@ alias sup='m2 setup:upgrade'
 m2-deploy-prod() {
   phpVersion=$(_phpVer)
   echo '----- deploying production mode -----'
-  $phpVersion bin/magento maintenance:enable &&
-    $phpVersion bin/magento setup:upgrade &&
-    $phpVersion bin/magento deploy:mode:set production -s &&
-    $phpVersion bin/magento setup:di:compile &&
-    $phpVersion bin/magento setup:static-content:deploy en_US vi_VN -f -j 4 &&
-    $phpVersion bin/magento cache:flush &&
-    $phpVersion bin/magento maintenance:disable
+  m2 maintenance:enable &&
+    m2 setup:upgrade &&
+    m2 deploy:mode:set production -s &&
+    m2 setup:di:compile &&
+    m2 setup:static-content:deploy en_US vi_VN -f -j 4 &&
+    m2 cache:flush &&
+    m2 maintenance:disable
 }
 
 _phpVer() {
