@@ -13,6 +13,7 @@ fi
 typeset -a TM_CUSTOM_FILE=(
   agnoster # Override Agnoster theme
   alias # Alias & custom function
+  git # Git
   magento # Magento CLI
   docker # Docker CLI
   terminal # Custom terminal function
