@@ -17,15 +17,15 @@ _greeting-tm
 _set-window-title-tm() {
   local title
   local trimPwdPatterns=(
-  /var/www/*/www/
-  /var/www/
-  ) 2> /dev/null
+    "[^/]*/www/[^/]*/www/"
+    "/var/www/"
+  ) 2>/dev/null
   title="${PWD/#$HOME/~}"
   for regex in "${trimPwdPatterns[@]}"; do
-    if [[ $PWD == $regex* ]]; then
-      local trimPwd=${PWD#*$regex} #remove $dir at the beginning
-#      title=${trimPwd%%/*} #remove all except the first folder
-      title=$trimPwd
+    if [[ $PWD =~ $regex ]]; then
+      local trimPwd=${PWD#*"${MATCH}"} #remove $dir at the beginning
+      #title=${trimPwd%%/*} #remove all except the first folder
+      [[ -n $trimPwd ]] && title=$trimPwd
       break
     fi
   done
