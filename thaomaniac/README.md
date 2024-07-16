@@ -17,8 +17,15 @@
 3. Create a new Zsh configuration by copying/linking the Zsh configuration files provided:
 
    ```console
-   ln -s "${ZDOTDIR:-$HOME}"/.zprezto/thaomaniac/zshrc "${ZDOTDIR:-$HOME}/.zshrc"
+   ln -s "${ZDOTDIR:-$HOME}"/.zprezto/thaomaniac/runcoms/zshrc "${ZDOTDIR:-$HOME}/.zshrc"
    ```
+   or
+   ```console
+    setopt EXTENDED_GLOB
+    for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/thaomaniac/runcoms/^README.md(.N); do
+      ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
+    done
+    ```
 
 4. Download and install fonts.
     - Powerline fonts

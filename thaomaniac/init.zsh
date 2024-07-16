@@ -170,8 +170,8 @@ ZPREZTODIR="$(dirname "${0:h}")"
 ZTMDIR=${0:h}
 
 # Source the Prezto configuration file.
-if [[ -s "$ZTMDIR/zpreztorc" ]]; then
-  source "$ZTMDIR/zpreztorc"
+if [[ -s "$ZTMDIR/runcoms/zpreztorc" ]]; then
+  source "$ZTMDIR/runcoms/zpreztorc"
 fi
 # End ThaoManiac
 # Disable color and theme in dumb terminals.
