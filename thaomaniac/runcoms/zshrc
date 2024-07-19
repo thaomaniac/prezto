@@ -7,6 +7,6 @@
 #   Vu Thanh Thao <thaomaniac@gmail.com>
 #
 # Source Prezto.
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/thaomaniac/custom/initialize" ]]; then
-  source "${ZDOTDIR:-$HOME}/.zprezto/thaomaniac/custom/initialize"
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/thaomaniac/custom/initialize.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/thaomaniac/custom/initialize.zsh"
 fi

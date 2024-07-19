@@ -20,7 +20,7 @@ typeset -a TM_CUSTOM_FILE=(
 )
 
 for file in "${TM_CUSTOM_FILE[@]}"; do
-  file=$ZTMDIR/custom/$file
+  file=$ZTMDIR/custom/$file.zsh
   if [[ -f $file ]]; then
     source $file
   fi
