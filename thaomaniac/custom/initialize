@@ -34,8 +34,8 @@ for file in $ZTMDIR/local/*; do
 done
 
 #----- load bg notify -----#
-if [[ -s "$ZTMDIR/plugins/zsh-background-notify/bgnotify.plugin.zsh" ]]; then
-  source "$ZTMDIR/plugins/zsh-background-notify/bgnotify.plugin.zsh"
+if [[ -s "$ZTMDIR/plugins/bgnotify/bgnotify.plugin.zsh" ]]; then
+  source "$ZTMDIR/plugins/bgnotify/bgnotify.plugin.zsh"
 fi
 
 # remove background color 'ls'
