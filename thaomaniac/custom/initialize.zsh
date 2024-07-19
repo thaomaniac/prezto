@@ -26,6 +26,9 @@ for file in "${TM_CUSTOM_FILE[@]}"; do
   fi
 done
 
+# load completions
+fpath=($ZTMDIR/completions $fpath)
+
 # load local file (not in git)
 for file in $ZTMDIR/local/*; do
   if [[ -f $file ]]; then

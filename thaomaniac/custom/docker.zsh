@@ -26,11 +26,6 @@ _check_docker_dir() {
 }
 add-zsh-hook chpwd _check_docker_dir
 
-unalias dkc >/dev/null 2>&1
-function dkc() {
-  docker compose "$@"
-}
-
 dkc-script() {
   if isDockerDir; then
     scriptCommand=$1
