@@ -38,21 +38,18 @@ prompt_context() {
 
 # Icon for begin the prompt with Nerd Font
 _load_dir_icon() {
-  if [[ $PWD/ == /home/* ]]; then
-    START_ICON="\uf015" #
-    return 1
-  elif [[ -s "$PWD/bin/magento" ]]; then
+  if [[ -s "$PWD/bin/magento" ]]; then
     START_ICON="\ue740" #
     return 1
   elif [[ -s "$PWD/docker-compose.yml" ]]; then
     START_ICON="\uf308" #
     return 1
-  elif [[ -s "$PWD/spark" && -d "$PWD/vendor/codeigniter4" ]]; then
-    START_ICON="\ue780" #
-    return 1
   elif [[ ! -w $PWD ]]; then
     local -i w=$?
     START_ICON="\uf023" #
+  elif [[ $PWD/ == /home/* ]]; then
+    START_ICON="\uf015" #
+    return 1
   else
     START_ICON="\uf31b" #
     #START_ICON="\uf07c" #
