@@ -89,7 +89,7 @@ _m2DockerPhpVerFile() {
   local phpVer='php'
 
   if [ -f "$file" ]; then
-    while IFS=: read -r folder php_version; do
+    while IFS="=" read -r folder php_version; do
       if [[ "$PWD" == *"/$folder" ]]; then
         phpVer=$php_version
         break
