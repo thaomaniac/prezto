@@ -59,22 +59,22 @@ _dkc-script_completion() {
     'export:Export database'
   )
 
-  if [[ ${words[2]} == "xdebug" ]]; then
-    if [[ ${#words[@]} -eq 3 || ${words[3]} == php* ]]; then
-      _describe 'xdebug command' commands_xdebug
-    fi
-  elif [[ ${words[2]} == "database" ]]; then
-    if [[ ${#words[@]} -eq 3 ]]; then
-      _describe 'database command' commands_database
-    fi
-  else
-    local commands
-    commands=(
-      'xdebug:Xdebug command description'
-      'database:Database command description'
-    )
-    _describe 'command' commands
-  fi
+  local commands=(
+    'xdebug:Xdebug command description'
+    'database:Database command description'
+  )
+  case ${words[2]} in
+  xdebug)
+    [[ ${#words[@]} -eq 3 || ${words[3]} == php* ]] && _describe 'xdebug command' commands_xdebug || _default
+    ;;
+  database)
+    [[ ${#words[@]} -eq 3 ]] && _describe 'database command' commands_database || _default
+    ;;
+  *)
+    _describe 'command' commands || _default
+    ;;
+  esac
+
 }
 compdef _dkc-script_completion dkc-script
 
