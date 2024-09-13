@@ -53,6 +53,7 @@ _dkc-script_completion() {
 
   local commands_database
   commands_database=(
+    'exec:Exec database'
     'create:Create database'
     'drop:Drop database'
     'import:Import database'
@@ -89,7 +90,7 @@ _m2DockerPhpVerFile() {
   local phpVer='php'
 
   if [ -f "$file" ]; then
-    while IFS="=" read -r folder php_version; do
+    while IFS=":" read -r folder php_version; do
       if [[ "$PWD" == *"/$folder" ]]; then
         phpVer=$php_version
         break
