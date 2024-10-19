@@ -58,6 +58,7 @@ _dkc-script_completion() {
     'drop:Drop database'
     'import:Import database'
     'export:Export database'
+    'list:List databases'
   )
 
   local commands=(
@@ -79,11 +80,6 @@ _dkc-script_completion() {
 }
 compdef _dkc-script_completion dkc-script
 
-#_docker_compose_completion() {
-#compadd  tes1 test2 test3
-#}
-#compdef _docker_compose_completion dkc
-
 ##---Magento command with docker
 _m2DockerPhpVerFile() {
   local file="$DOCKER_ROOT/.php-map"
@@ -101,6 +97,7 @@ _m2DockerPhpVerFile() {
 }
 
 _isMultiDocker() {
+  isDockerDir
   if [ -f "$DOCKER_ROOT/.php-map" ]; then
     return 0 #true
   fi
@@ -108,19 +105,15 @@ _isMultiDocker() {
 }
 
 _m2-docker() {
+  local phpService='php'
   if _isMultiDocker; then
     ! ism2dir && _print_msg_not_m2_dir && return 1
-    local phpService=$(_m2DockerPhpVerFile)
+    phpService=$(_m2DockerPhpVerFile)
     local lastDir=${PWD##*/}
-    local workingDir=$(docker inspect --format='{{.Config.WorkingDir}}' "$(docker compose ps -q "$phpService")")
-    local working_dir="$workingDir/$lastDir"
-    docker compose exec -T "$phpService" bash -c "cd $working_dir && bin/magento $*"
-  else
-    local phpService='php'
-    local workingDir=$(docker inspect --format='{{.Config.WorkingDir}}' "$(docker compose ps -q "$phpService")")
-    local working_dir="$workingDir"
-    docker compose exec -T "$phpService" bash -c "cd $working_dir && bin/magento $*"
+    local m2_working_dir="$lastDir"
   fi
+  local workingDir=$(docker inspect --format='{{.Config.WorkingDir}}' "$(docker compose ps -q "$phpService")")
+  docker compose exec -T "$phpService" bash -c "cd $workingDir/$m2_working_dir && bin/magento $*"
 }
 
 _m2-normal() {
@@ -134,3 +127,17 @@ m2() {
     _m2-normal "$@"
   fi
 }
+
+composer-dkc() {
+  local phpService='php'
+  if _isMultiDocker; then
+    ! ism2dir && _print_msg_not_m2_dir && return 1
+    phpService=$(_m2DockerPhpVerFile)
+    local lastDir=${PWD##*/}
+    local m2_working_dir="$lastDir"
+  fi
+  local workingDir=$(docker inspect --format='{{.Config.WorkingDir}}' "$(docker compose ps -q "$phpService")")
+  docker compose exec -T "$phpService" bash -c "cd $workingDir/$m2_working_dir && composer $*"
+}
+compdef composer-dkc=composer
+
