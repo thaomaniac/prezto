@@ -1,4 +1,7 @@
 #!/usr/bin/env zsh
+################################################################################
+# Copyright (c) 2024 thaomaniac  <thaomaniac@gmail.com>
+################################################################################
 
 function _poweredBy() {
   echo 'IF9fX19fX19fIF9fX19fICBfX19fICBfXyAgX19fX19fICAgXyAgX19fX19fX19fICBfX19fXwov' | base64 -d

@@ -1,4 +1,7 @@
 #!/usr/bin/env zsh
+################################################################################
+# Copyright (c) 2024 thaomaniac  <thaomaniac@gmail.com>
+################################################################################
 
 #check the current directory is docker or is in the directory containing docker
 # 0 true; 1 false
@@ -142,4 +145,3 @@ composer-dkc() {
 compdef composer-dkc=composer
 alias dkc-composer=composer-dkc
 compdef dkc-composer=composer
-

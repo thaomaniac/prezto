@@ -1,4 +1,8 @@
 #!/usr/bin/env zsh
+################################################################################
+# Copyright (c) 2024 thaomaniac  <thaomaniac@gmail.com>
+################################################################################
+
 ##----------Magento command----------##
 
 # check is current directory is magento
@@ -22,20 +26,7 @@ alias cf='m2 cache:flush'
 alias sdc='m2 setup:di:compile'
 alias ssd='m2 setup:static-content:deploy'
 alias seup='m2 setup:upgrade'
-alias sup='m2 setup:upgrade'
-
-# deploy production mode
-m2-deploy-prod() {
-  phpVersion=$(_phpVer)
-  echo '----- deploying production mode -----'
-  m2 maintenance:enable &&
-    m2 setup:upgrade &&
-    m2 deploy:mode:set production -s &&
-    m2 setup:di:compile &&
-    m2 setup:static-content:deploy en_US vi_VN -f -j 4 &&
-    m2 cache:flush &&
-    m2 maintenance:disable
-}
+alias sup=seup
 
 _phpVer() {
   _m2phpVerFile
