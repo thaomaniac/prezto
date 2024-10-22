@@ -140,4 +140,6 @@ composer-dkc() {
   docker compose exec -T "$phpService" bash -c "cd $workingDir/$m2_working_dir && composer $*"
 }
 compdef composer-dkc=composer
+alias dkc-composer=composer-dkc
+compdef dkc-composer=composer
 
