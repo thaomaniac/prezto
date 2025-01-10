@@ -116,7 +116,7 @@ _m2-docker() {
     local m2_working_dir="$lastDir"
   fi
   local workingDir=$(docker inspect --format='{{.Config.WorkingDir}}' "$(docker compose ps -q "$phpService")")
-  docker compose exec -T "$phpService" bash -c "cd $workingDir/$m2_working_dir && bin/magento $*"
+  docker compose exec -T "$phpService" bash -c "cd $workingDir/$m2_working_dir && bin/magento $* --ansi"
 }
 
 _m2-normal() {
@@ -140,7 +140,7 @@ composer-dkc() {
     local m2_working_dir="$lastDir"
   fi
   local workingDir=$(docker inspect --format='{{.Config.WorkingDir}}' "$(docker compose ps -q "$phpService")")
-  docker compose exec -T "$phpService" bash -c "cd $workingDir/$m2_working_dir && composer $*"
+  docker compose exec "$phpService" bash -c "cd $workingDir/$m2_working_dir && composer $*"
 }
 compdef composer-dkc=composer
 alias dkc-composer=composer-dkc
