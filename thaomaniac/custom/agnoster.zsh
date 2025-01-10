@@ -47,12 +47,12 @@ _load_dir_icon() {
   elif [[ -s "$PWD/docker-compose.yml" ]]; then
     START_ICON="\uf308" #
     return 1
+  elif [[ $PWD/ == /home/* ]]; then
+    START_ICON="\Uf02dc" #󰋜
+    return 1
   elif [[ ! -w $PWD ]]; then
     local -i w=$?
-    START_ICON="\uf023" #
-  elif [[ $PWD/ == /home/* ]]; then
-    START_ICON="\uf015" #
-    return 1
+    START_ICON=""
   else
     START_ICON="\uf31b" #
     #START_ICON="\uf07c" #
