@@ -32,3 +32,9 @@
 [submodule "thaomaniac/plugins/bgnotify"]
 	path = thaomaniac/plugins/bgnotify
 	url = https://github.com/t413/zsh-background-notify.git
+[submodule "thaomaniac/plugins/you-should-use"]
+	path = thaomaniac/plugins/you-should-use
+	url = https://github.com/MichaelAquilina/zsh-you-should-use.git
+[submodule "thaomaniac/plugins/zsh-z"]
+	path = thaomaniac/plugins/zsh-z
+	url = https://github.com/agkozak/zsh-z.git
