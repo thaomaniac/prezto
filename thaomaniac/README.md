@@ -17,7 +17,7 @@
 3. Create a new Zsh configuration by copying/linking the Zsh configuration files provided:
 
    ```console
-   ln -s "${ZDOTDIR:-$HOME}"/.zprezto/thaomaniac/runcoms/zshrc "${ZDOTDIR:-$HOME}/.zshrc"
+   cp "${ZDOTDIR:-$HOME}"/.zprezto/thaomaniac/runcoms/zshrc "${ZDOTDIR:-$HOME}/.zshrc"
    ```
    or
    ```console
