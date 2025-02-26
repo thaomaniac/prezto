@@ -18,15 +18,14 @@ _print_msg_not_m2_dir() {
 
 #---Alias with Nginx multiple php
 m2() {
-  # shellcheck disable=SC2046
-  eval $(_phpVer) bin/magento "$@"
+  $(_phpVer) bin/magento "$@"
 }
 alias cc='m2 cache:clean'
 alias cf='m2 cache:flush'
 alias sdc='m2 setup:di:compile'
 alias ssd='m2 setup:static-content:deploy'
 alias seup='m2 setup:upgrade'
-alias sup=seup
+alias sup='m2 setup:upgrade'
 
 _phpVer() {
   _m2phpVerFile
@@ -173,7 +172,7 @@ compdef _magento_autocomplete m2 bin/magento
 
 # netz98 magerun CLI tools for Magento 2 https://github.com/netz98/n98-magerun2
 n98() {
-  eval "$(_phpVer)" /usr/local/bin/n98-magerun2.phar "$@"
+  "$(_phpVer)" /usr/local/bin/n98-magerun2.phar "$@"
 }
 
 n98-m2-gen-cli-completion() {

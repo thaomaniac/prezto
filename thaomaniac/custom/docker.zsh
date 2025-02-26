@@ -120,7 +120,7 @@ _m2-docker() {
 }
 
 _m2-normal() {
-  eval "$(_phpVer)" bin/magento "$@"
+  "$(_phpVer)" bin/magento "$@"
 }
 
 m2() {
