@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 ################################################################################
-# Copyright (c) 2024 thaomaniac  <thaomaniac@gmail.com>
+# Copyright (c) 2025 thaomaniac <thaomaniac@gmail.com>
 ################################################################################
 
 #check the current directory is docker or is in the directory containing docker
@@ -83,6 +83,22 @@ _dkc-script_completion() {
 }
 compdef _dkc-script_completion dkc-script
 
+##---PHP Composer command with docker
+composer-dkc() {
+  local phpService='php'
+  if _isMultiDocker; then
+    ! ism2dir && _print_msg_not_m2_dir && return 1
+    phpService=$(_m2DockerPhpVerFile)
+    local lastDir=${PWD##*/}
+    local m2_working_dir="$lastDir"
+  fi
+  local workingDir=$(docker inspect --format='{{.Config.WorkingDir}}' "$(docker compose ps -q "$phpService")")
+  docker compose exec "$phpService" bash -c "cd $workingDir/$m2_working_dir && composer $*"
+}
+compdef composer-dkc=composer
+alias dkc-composer=composer-dkc
+compdef dkc-composer=composer
+
 ##---Magento command with docker
 _m2DockerPhpVerFile() {
   local file="$DOCKER_ROOT/.php-map"
@@ -131,7 +147,8 @@ m2() {
   fi
 }
 
-composer-dkc() {
+##---N98 Magerun2 command with docker
+_n98-m2-docker() {
   local phpService='php'
   if _isMultiDocker; then
     ! ism2dir && _print_msg_not_m2_dir && return 1
@@ -140,8 +157,17 @@ composer-dkc() {
     local m2_working_dir="$lastDir"
   fi
   local workingDir=$(docker inspect --format='{{.Config.WorkingDir}}' "$(docker compose ps -q "$phpService")")
-  docker compose exec "$phpService" bash -c "cd $workingDir/$m2_working_dir && composer $*"
+  docker compose exec -T "$phpService" bash -c "cd $workingDir/$m2_working_dir && n98-magerun2.phar $* --ansi"
 }
-compdef composer-dkc=composer
-alias dkc-composer=composer-dkc
-compdef dkc-composer=composer
+
+_n98-m2-normal() {
+  "$(_phpVer)" n98-magerun2.phar "$@"
+}
+
+n98-m2() {
+  if isDockerDir; then
+    _n98-m2-docker "$@"
+  else
+    _n98-m2-normal "$@"
+  fi
+}

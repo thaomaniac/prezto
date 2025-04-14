@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 ################################################################################
-# Copyright (c) 2024 thaomaniac  <thaomaniac@gmail.com>
+# Copyright (c) 2025 thaomaniac <thaomaniac@gmail.com>
 ################################################################################
 
 ##----------Magento command----------##
@@ -171,7 +171,7 @@ _magento_autocomplete() {
 compdef _magento_autocomplete m2 bin/magento
 
 # netz98 magerun CLI tools for Magento 2 https://github.com/netz98/n98-magerun2
-n98() {
+n98-m2() {
   "$(_phpVer)" /usr/local/bin/n98-magerun2.phar "$@"
 }
 
@@ -207,5 +207,5 @@ _n98_magerun2_autocomplete() {
   # shellcheck disable=SC2046
   compadd $(_n98_magerun2_list_command)
 }
-compdef _n98_magerun2_autocomplete n98 n98-magerun2.phar
+compdef _n98_magerun2_autocomplete n98-m2 n98-magerun2.phar
 ##----------END Completion----------##
