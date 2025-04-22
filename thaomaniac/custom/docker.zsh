@@ -39,48 +39,60 @@ dkc-script() {
     return 1
   fi
 }
+_dkc-script_completion() {
+  # Verify we're in a docker project directory
+  isDockerDir || return 1
+
+  # Level 1 Completion: Script names
+  if ((CURRENT == 2))   && [[ -d "$DOCKER_ROOT/scripts" ]]; then
+    local -a scripts_with_desc
+
+    # Process each script in the scripts directory
+    for script in "$DOCKER_ROOT"/scripts/*(N); do
+      # Extract description from script file (if exists)
+      local desc=$(grep -m1 "^# *DESCRIPTION:" "$script" 2> /dev/null | sed 's/^# *DESCRIPTION: *//')
+
+      # Only include scripts that have descriptions
+      [[ -n "$desc" ]] && scripts_with_desc+=("${script:t}:$desc")
+    done
+
+    # Display available scripts with descriptions
+    _describe 'Available scripts' scripts_with_desc
+
+    # Level 2 Completion: Script actions
+  elif ((CURRENT == 3)); then
+    local script_name=$words[2]  # Get the script name from command line
+    local script_path="$DOCKER_ROOT/scripts/$script_name"
+
+    if [[ -f "$script_path" ]]; then
+      local -a actions
+
+      # Parse ACTION declarations from script file
+      while IFS= read -r line; do
+        if [[ "$line" =~ "^# *ACTION: ([^ ]+) +(.+)" ]]; then
+              # Format: action:description
+              actions+=("$match[1]:$match[2]")
+        fi
+      done   < "$script_path"
+
+      if ((${#actions[@]} > 0)); then
+        # Show available actions with descriptions
+        _describe 'Available actions' actions
+      else
+        # Fallback to file completion if no actions defined
+        _files
+      fi
+    fi
+
+    # Level 3+ Completion: Action arguments (placeholder for future extension)
+  elif   ((CURRENT >= 4)); then
+    # Currently just suggests files, can be enhanced later
+    _arguments \
+      '*:files:_files' && return 0
+  fi
+}
 
 # Define completion function for dkc-script
-_dkc-script_completion() {
-  if ! isDockerDir; then
-    return
-  fi
-  local commands_xdebug
-  commands_xdebug=(
-    'enable:Enable Xdebug'
-    'on:Enable Xdebug'
-    'disable:Disable Xdebug'
-    'off:Disable Xdebug'
-    'status:Status Xdebug'
-  )
-
-  local commands_database
-  commands_database=(
-    'exec:Exec database'
-    'create:Create database'
-    'drop:Drop database'
-    'import:Import database'
-    'export:Export database'
-    'list:List databases'
-  )
-
-  local commands=(
-    'xdebug:Xdebug command description'
-    'database:Database command description'
-  )
-  case ${words[2]} in
-  xdebug)
-    [[ ${#words[@]} -eq 3 || ${words[3]} == php* ]] && _describe 'xdebug command' commands_xdebug || _default
-    ;;
-  database)
-    [[ ${#words[@]} -eq 3 ]] && _describe 'database command' commands_database || _default
-    ;;
-  *)
-    _describe 'command' commands || _default
-    ;;
-  esac
-
-}
 compdef _dkc-script_completion dkc-script
 
 ##---PHP Composer command with docker
@@ -110,7 +122,7 @@ _m2DockerPhpVerFile() {
         phpVer=$php_version
         break
       fi
-    done <"$file"
+    done < "$file"
   fi
   echo "$phpVer"
 }
