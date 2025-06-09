@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
-################################################################################
+#-------------------------------------------------------------------------------
 # Copyright (c) 2025 thaomaniac <thaomaniac@gmail.com>
-################################################################################
+#-------------------------------------------------------------------------------
 
 ## Aliases
 alias gst='git status'
@@ -9,10 +9,8 @@ alias gst='git status'
 ## Functions
 
 # Git commit with branch name as prefix
-#
 # Usage:
 #   commit "Commit message"
-
 # Notes:
 #   - Commit message must be enclosed in quotation marks
 commit() {
@@ -34,36 +32,84 @@ commit() {
 
 # Git commit with custom date
 # Usage:
-#   git_commit_at -t "YYYY-MM-DD HH:MM:SS" -m "Commit message"
-#
+#   gcmat -t "YYYY-MM-DD HH:MM:SS" -m "Commit message"
 # Notes:
 #   - Time should be in the format "YYYY-MM-DD HH:MM:SS"
 #   - The commit will use this time as both AuthorDate and CommitDate
-gcommit_at() {
+gcmat() {
   local date="$1"
   local message="$2"
 
   # Parse flags for time (-t) and message (-m)
   while getopts "t:m:" opt; do
     case $opt in
-      t)
-        date="$OPTARG"
-        ;;
-      m)
-        message="$OPTARG"
-        ;;
-      *)
-        echo "❌ Invalid option. Usage: git_commit_at -t \"YYYY-MM-DD HH:MM:SS\" -m \"commit message\""
-        return 1
-        ;;
+    t)
+      date="$OPTARG"
+      ;;
+    m)
+      message="$OPTARG"
+      ;;
+    *)
+      echo "❌ Invalid option. Usage: gcmat -t \"YYYY-MM-DD HH:MM:SS\" -m \"commit message\""
+      return 1
+      ;;
     esac
   done
 
   if [ -z "$date" ] || [ -z "$message" ]; then
-    echo "Usage: git_commit_at -t \"YYYY-MM-DD HH:MM:SS\" -m \"commit message\""
+    echo "Usage: gcmat -t \"YYYY-MM-DD HH:MM:SS\" -m \"commit message\""
     return 1
   fi
 
   GIT_AUTHOR_DATE="$date" GIT_COMMITTER_DATE="$date" \
     git commit -m "$message"
+}
+
+# Create a merge request (MR) or pull request (PR) URL
+gmrc() {
+  local remote_name="origin"
+  local source_branch
+  local target_branch
+
+  if [[ -n "$2" ]]; then
+    source_branch="$1"
+    target_branch="$2"
+  elif [[ -n "$1" ]]; then
+    source_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) # $(git branch --show-current 2>/dev/null)
+    target_branch="$1"
+  else
+    echo "❌ Missing arguments."
+    echo "Usage:"
+    echo "  gcmr <target_branch>                  # use current branch as source"
+    echo "  gcmr <source_branch> <target_branch>  # specify both branches"
+    return 1
+  fi
+
+  local remote_url=$(git config --get remote."$remote_name".url)
+  if [[ -z "$remote_url" ]]; then
+    echo "❌ Remote '$remote_name' not found."
+    return 1
+  fi
+
+  # Convert SSH URL to HTTPS
+  if [[ "$remote_url" =~ ^git@ ]]; then
+    # Convert git@host:user/repo.git -> https://host/user/repo
+    remote_url=$(echo "$remote_url" | sed -E 's#git@([^:]+):#https://\1/#')
+  fi
+  remote_url=${remote_url%.git}
+
+  # Build the MR/PR URL based on provider
+  local merge_url=""
+  if [[ "$remote_url" == *"gitlab"* ]]; then
+    merge_url="$remote_url/-/merge_requests/new?merge_request%5Bsource_branch%5D=$source_branch&merge_request%5Btarget_branch%5D=$target_branch"
+  elif [[ "$remote_url" == *"github"* ]]; then
+    merge_url="$remote_url/compare/$target_branch...$source_branch?expand=1"
+  else
+    echo "❌ Unsupported Git provider: $remote_url"
+    return 2
+  fi
+
+  # Print the final URL
+  echo "To create a merge request from '$source_branch' into '$target_branch', visit:"
+  echo "  $merge_url"
 }
