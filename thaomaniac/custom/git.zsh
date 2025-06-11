@@ -66,24 +66,85 @@ gcmat() {
 }
 
 # Create a merge request (MR) or pull request (PR) URL
-gmrc() {
+gmrcr() {
   local remote_name="origin"
   local source_branch
   local target_branch
+  local current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) # $(git branch --show-current 2>/dev/null)
+  local open_browser=false
 
-  if [[ -n "$2" ]]; then
-    source_branch="$1"
-    target_branch="$2"
-  elif [[ -n "$1" ]]; then
-    source_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) # $(git branch --show-current 2>/dev/null)
-    target_branch="$1"
-  else
-    echo "❌ Missing arguments."
-    echo "Usage:"
-    echo "  gcmr <target_branch>                  # use current branch as source"
-    echo "  gcmr <source_branch> <target_branch>  # specify both branches"
+  usage="❌ Missing or invalid arguments.
+ Usage:
+   gmrcr -t <target_branch>                     # use current branch as source
+   gmrcr -s <source_branch>                     # use current branch as target
+   gmrcr -s <source_branch> -t <target_branch>  # specify both branches
+   gmrcr -s<source_branch> -t<target_branch>    # specify both branches
+   gmrcr <branch> -s <source_branch>            # positional branch = target
+   gmrcr <branch> -t <target_branch>            # positional branch = source"
+
+  # Parse args
+  positional=""
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+    -s)
+      # Case: flag -s followed by source branch (e.g., -s staging)
+      source_branch="$2"
+      shift 2
+      ;;
+    -t)
+      # Case: flag -t followed by target branch (e.g., -t develop)
+      target_branch="$2"
+      shift 2
+      ;;
+    -s*)
+      # Case: flag -s<value> style (e.g., -sstaging)
+      source_branch="${1:2}"
+      shift
+      ;;
+    -t*)
+      # Case: flag -t<value> style (e.g., -tdevelop)
+      target_branch="${1:2}"
+      shift
+      ;;
+    -o | --open)
+      # Flag: open in browser
+      open_browser=true
+      shift
+      ;;
+    -*)
+      # Case: unknown flag (starts with - but not recognized)
+      echo "$usage"
+      return 1
+      ;;
+    *)
+      # Case: positional argument (e.g., TM-007)
+      positional="$1"
+      shift
+      ;;
+    esac
+  done
+
+  if [[ -z "$source_branch" && -z "$target_branch" ]]; then
+    echo "$usage"
     return 1
   fi
+
+  # Assign positional if available
+  if [[ -n "$positional" ]]; then
+    if [[ -n "$source_branch" && -z "$target_branch" ]]; then
+      target_branch="$positional"
+    elif [[ -n "$target_branch" && -z "$source_branch" ]]; then
+      source_branch="$positional"
+    else
+      echo "$usage"
+      return 1
+    fi
+  fi
+
+  [[ -n "$source_branch" ]] || source_branch="$current_branch"
+  [[ -n "$target_branch" ]] || target_branch="$current_branch"
+
+  echo "✔ Using source: $source_branch → target: $target_branch"
 
   local remote_url=$(git config --get remote."$remote_name".url)
   if [[ -z "$remote_url" ]]; then
@@ -112,4 +173,7 @@ gmrc() {
   # Print the final URL
   echo "To create a merge request from '$source_branch' into '$target_branch', visit:"
   echo "  $merge_url"
+  if [[ "$open_browser" == true ]]; then
+    command -v xdg-open >/dev/null && xdg-open "$merge_url" >/dev/null 2>&1
+  fi
 }
