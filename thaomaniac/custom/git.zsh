@@ -157,5 +157,6 @@ Usage:
   echo "✔ Using source: $source_branch → target: $target_branch"
   echo "To create a merge request from '$source_branch' into '$target_branch', visit:"
   echo "  $merge_url"
-  $open_browser && command -v xdg-open >/dev/null && xdg-open "$merge_url" >/dev/null 2>&1
+  [[ "$open_browser" == "true" ]] && command -v xdg-open >/dev/null && xdg-open "$merge_url" >/dev/null 2>&1
+  return 0
 }
