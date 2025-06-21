@@ -4,6 +4,7 @@
 #-------------------------------------------------------------------------------
 
 ## Aliases
+unalias g 2>/dev/null
 alias gst='git status'
 
 ## Functions
@@ -32,16 +33,23 @@ commit() {
 
 # Git commit with custom date
 # Usage:
-#   gcmat -t "YYYY-MM-DD HH:MM:SS" -m "Commit message"
+#   gcm-at -t "YYYY-MM-DD HH:MM:SS" -m "Commit message"
 # Notes:
 #   - Time should be in the format "YYYY-MM-DD HH:MM:SS"
 #   - The commit will use this time as both AuthorDate and CommitDate
-gcmat() {
-  local date="$1"
-  local message="$2"
+gcm-at() {
+
+  usage() {
+    echo "Usage: gcm-at -t \"YYYY-MM-DD HH:MM:SS\" -m \"commit message\""
+    echo "  -t: Time for commit (format: YYYY-MM-DD HH:MM:SS)"
+    echo "  -m: Commit message"
+    echo "  -h: Show this help message"
+  }
+
+  local date message
 
   # Parse flags for time (-t) and message (-m)
-  while getopts "t:m:" opt; do
+  while getopts "t:m:h" opt; do
     case $opt in
     t)
       date="$OPTARG"
@@ -49,37 +57,43 @@ gcmat() {
     m)
       message="$OPTARG"
       ;;
+    h)
+      usage
+      return 0
+      ;;
     *)
-      echo "❌ Invalid option. Usage: gcmat -t \"YYYY-MM-DD HH:MM:SS\" -m \"commit message\""
+      usage
       return 1
       ;;
     esac
   done
 
-  if [ -z "$date" ] || [ -z "$message" ]; then
-    echo "Usage: gcmat -t \"YYYY-MM-DD HH:MM:SS\" -m \"commit message\""
+  # Check if both date and message are provided
+  if [[ -z "$date" || -z "$message" ]]; then
+    usage
     return 1
   fi
 
-  GIT_AUTHOR_DATE="$date" GIT_COMMITTER_DATE="$date" \
-    git commit -m "$message"
+  GIT_AUTHOR_DATE="$date" GIT_COMMITTER_DATE="$date" git commit -m "$message"
 }
 
 # Create a merge request (MR) or pull request (PR) URL
-gmrcr() {
+gmr-cr() {
+
+  usage() {
+    echo "Usage:
+    gmrcr -t <target_branch>                     # use current branch as source
+    gmrcr -s <source_branch>                     # use current branch as target
+    gmrcr -s <source_branch> -t <target_branch>  # specify both branches
+    gmrcr -s<source_branch> -t<target_branch>    # specify both branches
+    gmrcr -o --open                              # open URL in browser"
+  }
+
   local remote_name="origin"
   local source_branch
   local target_branch
-  local current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) # $(git branch --show-current 2>/dev/null)
+  local current_branch
   local open_browser=false
-
-  usage="❌ Missing or invalid arguments.
-Usage:
-  gmrcr -t <target_branch>                     # use current branch as source
-  gmrcr -s <source_branch>                     # use current branch as target
-  gmrcr -s <source_branch> -t <target_branch>  # specify both branches
-  gmrcr -s<source_branch> -t<target_branch>    # specify both branches
-  gmrcr -o --open                              # open URL in browser"
 
   # Parse args
   while [[ $# -gt 0 ]]; do
@@ -105,8 +119,12 @@ Usage:
       open_browser=true
       shift
       ;;
+    -h)
+      usage
+      return 0
+      ;;
     -*)
-      echo "$usage"
+      usage
       return 1
       ;;
     *)
@@ -117,10 +135,10 @@ Usage:
   done
 
   if [[ -z "$source_branch" && -z "$target_branch" ]]; then
-    echo "$usage"
+    usage
     return 1
   fi
-
+  current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) # $(git branch --show-current 2>/dev/null)
   [[ -n "$source_branch" ]] || source_branch="$current_branch"
   [[ -n "$target_branch" ]] || target_branch="$current_branch"
 
