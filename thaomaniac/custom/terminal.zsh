@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
-################################################################################
-# Copyright (c) 2024 thaomaniac  <thaomaniac@gmail.com>
-################################################################################
+#-------------------------------------------------------------------------------
+# Copyright (c) 2025 thaomaniac <thaomaniac@gmail.com>
+#-------------------------------------------------------------------------------
 
 function _poweredBy() {
   echo 'IF9fX19fX19fIF9fX19fICBfX19fICBfXyAgX19fX19fICAgXyAgX19fX19fX19fICBfX19fXwov' | base64 -d
@@ -49,7 +49,7 @@ function elapsed_preexec() {
 elapsed_precmd() {
   if [[ "$SHOW_ELAPSED" && "$elapsedTimer" ]]; then
     local -r now=$(date +%s%3N)
-    local -rF d_ms=$(($now - $elapsedTimer))
+    local -rF d_ms=$((now - elapsedTimer))
     local -rF d_s=$((d_ms / 1000))
     local -rF ms=$((d_ms % 1000))
     local -rF s=$((d_s % 60))
@@ -104,4 +104,44 @@ function bgnotify_formatted() { ## args: (exit_status, command, elapsed_seconds)
   (($3 >= 60)) && elapsed="$((($3 % 3600) / 60))m $elapsed"
   (($3 >= 3600)) && elapsed="$(($3 / 3600))h $elapsed"
   [ $1 -eq 0 ] && notify-send -i org.gnome.Terminal "Success ($elapsed)✔" "$2" || notify-send -i org.gnome.Terminal "FAIL ($elapsed)✘" "$2"
+}
+
+# Print a newline before the prompt
+_print_new_line_preexec() {
+  [[ -n $1 && $1 != "clear" && $1 != "reset" ]] && pnl_newline=true
+}
+_print_new_line_precmd() {
+  if [[ "$pnl_newline" == true ]]; then
+    echo # Print a blank line
+    if [[ "$(detect_terminal)" == "ubuntu" ]]; then
+      draw_horizontal_line "─"
+    fi
+    unset pnl_newline
+  fi
+}
+add-zsh-hook preexec _print_new_line_preexec
+add-zsh-hook precmd _print_new_line_precmd
+
+# Function: draw_horizontal_line
+draw_horizontal_line() {
+  local char="${1:-_}"
+  local color_code='\e[38;5;236m'
+  local reset_code='\e[0m'
+  local cols
+  cols=$(tput cols)
+
+  # printf "${color_code}%*s${reset_code}\n" "$cols" '' | tr ' ' "$char"
+  printf "${color_code}%s${reset_code}\n" "$(printf '%*s' "$cols" '' | sed "s/ /$char/g")"
+}
+
+detect_terminal() {
+  if [[ "$TERMINAL_EMULATOR" == "JetBrains-JediTerm" ]]; then
+    echo "jetbrains"
+  elif [[ "$TERM_PROGRAM" == "vscode" ]]; then
+    echo "vscode"
+  elif [[ "$COLORTERM" == "truecolor" ]] || [[ "$TERM" == "xterm-256color" ]]; then
+    echo "ubuntu"
+  else
+    echo "unknown"
+  fi
 }

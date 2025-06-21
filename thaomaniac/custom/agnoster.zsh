@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
-################################################################################
-# Copyright (c) 2024 thaomaniac  <thaomaniac@gmail.com>
-################################################################################
+#-------------------------------------------------------------------------------
+# Copyright (c) 2025 thaomaniac <thaomaniac@gmail.com>
+#-------------------------------------------------------------------------------
 
 ###----------Agnoster theme - Rewrite Prompt components----------###
 
@@ -101,16 +101,4 @@ prompt_status() {
   [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}$GEAR"
 
   [[ -n "$symbols" ]] && prompt_segment default default "$symbols\n"
-  _print_new_line_precmd
 }
-
-# Print a newline before the prompt
-_print_new_line_preexec() {
-  pnl_last_cmd="$1"
-}
-_print_new_line_precmd() {
-  [[ -n $pnl_last_cmd && $pnl_last_cmd != "clear" && $pnl_last_cmd != "reset" ]] && echo
-  unset pnl_last_cmd
-}
-add-zsh-hook preexec _print_new_line_preexec
-#add-zsh-hook precmd _print_new_line_precmd
