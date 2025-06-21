@@ -44,7 +44,6 @@ zstyle ':prezto:load' pmodule \
   'syntax-highlighting' \
   'autosuggestions' \
   'command-not-found' \
-  'docker' \
 
 #
 # Autosuggestions

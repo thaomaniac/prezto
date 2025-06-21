@@ -3,6 +3,10 @@
 # Copyright (c) 2025 thaomaniac <thaomaniac@gmail.com>
 #-------------------------------------------------------------------------------
 
+# Aliases
+alias dk='docker'
+alias dkc='docker compose'
+
 #check the current directory is docker or is in the directory containing docker
 # 0 true; 1 false
 # shellcheck disable=SC2120
