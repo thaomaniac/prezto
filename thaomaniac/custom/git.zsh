@@ -1,11 +1,20 @@
 #!/usr/bin/env zsh
 #-------------------------------------------------------------------------------
-# Copyright (c) 2025 thaomaniac <thaomaniac@gmail.com>
+# Copyright (c) 2025 ThaoManiac
+# Author: thaomaniac <thaomaniac@gmail.com>
+# Licensed under the MIT License
 #-------------------------------------------------------------------------------
 
 ## Aliases
-unalias g 2>/dev/null
 alias gst='git status'
+alias gb='git branch'
+alias gcm='git commit --message'
+alias gco='git checkout'
+alias gf='git fetch'
+alias gfm='git pull'
+alias gm='git merge'
+alias gp='git push'
+alias gs='git stash'
 
 ## Functions
 
@@ -51,20 +60,20 @@ gcm-at() {
   # Parse flags for time (-t) and message (-m)
   while getopts "t:m:h" opt; do
     case $opt in
-    t)
-      date="$OPTARG"
-      ;;
-    m)
-      message="$OPTARG"
-      ;;
-    h)
-      usage
-      return 0
-      ;;
-    *)
-      usage
-      return 1
-      ;;
+      t)
+        date="$OPTARG"
+        ;;
+      m)
+        message="$OPTARG"
+        ;;
+      h)
+        usage
+        return 0
+        ;;
+      *)
+        usage
+        return 1
+        ;;
     esac
   done
 
@@ -98,39 +107,39 @@ gmr-cr() {
   # Parse args
   while [[ $# -gt 0 ]]; do
     case "$1" in
-    -s)
-      source_branch="$2"
-      shift 2
-      ;;
-    -t)
-      target_branch="$2"
-      shift 2
-      ;;
-    -s*)
-      source_branch="${1:2}"
-      shift
-      ;;
-    -t*)
-      target_branch="${1:2}"
-      shift
-      ;;
-    -o | --open)
-      # Flag: open in browser
-      open_browser=true
-      shift
-      ;;
-    -h)
-      usage
-      return 0
-      ;;
-    -*)
-      usage
-      return 1
-      ;;
-    *)
-      # ignore args
-      shift
-      ;;
+      -s)
+        source_branch="$2"
+        shift 2
+        ;;
+      -t)
+        target_branch="$2"
+        shift 2
+        ;;
+      -s*)
+        source_branch="${1:2}"
+        shift
+        ;;
+      -t*)
+        target_branch="${1:2}"
+        shift
+        ;;
+      -o | --open)
+        # Flag: open in browser
+        open_browser=true
+        shift
+        ;;
+      -h)
+        usage
+        return 0
+        ;;
+      -*)
+        usage
+        return 1
+        ;;
+      *)
+        # ignore args
+        shift
+        ;;
     esac
   done
 
@@ -159,16 +168,16 @@ gmr-cr() {
   # Build the MR/PR URL based on provider
   local merge_url=""
   case "$remote_url" in
-  *gitlab*)
-    merge_url="$remote_url/-/merge_requests/new?merge_request%5Bsource_branch%5D=$source_branch&merge_request%5Btarget_branch%5D=$target_branch"
-    ;;
-  *github*)
-    merge_url="$remote_url/compare/$target_branch...$source_branch?expand=1"
-    ;;
-  *)
-    echo "❌ Unsupported Git provider: $remote_url"
-    return 2
-    ;;
+    *gitlab*)
+      merge_url="$remote_url/-/merge_requests/new?merge_request%5Bsource_branch%5D=$source_branch&merge_request%5Btarget_branch%5D=$target_branch"
+      ;;
+    *github*)
+      merge_url="$remote_url/compare/$target_branch...$source_branch?expand=1"
+      ;;
+    *)
+      echo "❌ Unsupported Git provider: $remote_url"
+      return 2
+      ;;
   esac
 
   # Print the final URL
