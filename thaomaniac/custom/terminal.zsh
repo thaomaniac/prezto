@@ -13,7 +13,7 @@ function _poweredBy() {
 function _greeting-tm() {
   _poweredBy
   # shellcheck disable=SC2028
-  echo "\n\033[1;5m$USER\033[0m - $(date '+%Y-%m-%d %H:%M:%S') \e[5m-\e[0m $(lsb_release -sd)\n"
+  echo "\n${_BOLD}${_BLINK}${USER_DISPLAY_NAME:-$USER}${_RESET} - $(date '+%Y-%m-%d %H:%M:%S') ${_BLINK}-${_RESET} $(lsb_release -sd)\n"
 }
 _greeting-tm
 

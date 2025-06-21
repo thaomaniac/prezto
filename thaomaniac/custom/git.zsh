@@ -18,11 +18,11 @@ commit() {
   # shellcheck disable=SC2155
   local branch=$(git-branch-current 2>/dev/null)
   if [ -z "$branch" ]; then
-    echo "\e[1;31mUnknown branch name\e[0m"
+    echo "${_BOLD}${_RED}Unknown branch name${_RESET}"
     return 1
   fi
   if [[ $# != 1 ]]; then
-    echo "\e[1;31mTypeScript Error:\e[0m Expected 1 arguments, but got $#!"
+    echo "${_BOLD}${_RED}TypeScript Error:${_RESET} Expected 1 arguments, but got $#!"
     return 1
   else
     # shellcheck disable=SC2155
