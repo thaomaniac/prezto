@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
-################################################################################
+#-------------------------------------------------------------------------------
 # Copyright (c) 2025 thaomaniac <thaomaniac@gmail.com>
-################################################################################
+#-------------------------------------------------------------------------------
 
 ##----------Magento command----------##
 
@@ -13,7 +13,7 @@ ism2dir() {
   return 1 # false
 }
 _print_msg_not_m2_dir() {
-  echo "\033[1mNotice:\033[0m Current directory is not the magento folder"
+  echo "${_BOLD}${_YELLOW}Notice:${_RESET} Current directory is not the magento folder"
 }
 
 #---Alias with Nginx multiple php
@@ -28,78 +28,64 @@ alias seup='m2 setup:upgrade'
 alias sup='m2 setup:upgrade'
 
 _phpVer() {
-  _m2phpVerFile
+  _m2phpVer
 }
-# get version from saved file
-_m2phpVerFile() {
+# Helper: validate PHP version format (phpx.y)
+_is_php_version_format() {
+  local ver="$1"
+  [[ "$ver" =~ ^php[0-9]+\.[0-9]+$ ]]
+}
+
+_m2phpVer() {
+  # If not inside a Magento 2 directory, return default "php"
   ! ism2dir && echo 'php' && return
 
   local fileDir="$ZTMDIR/local/magento/"
   local file="$fileDir/php_version"
-  local phpVer
-  local line=0
+  local projectDir="$PWD"
+  local newVer="$1"
 
-  if [ ! -f "$file" ]; then
-    mkdir "$fileDir" && touch "$file"
-  else
-    # shellcheck disable=SC2162
-    # lastDir=${PWD##*/}
-    while IFS=':' read -A args; do
-      ((line++))
-      if [[ ${args[1]} == "$PWD" ]]; then
-        phpVer="${args[2]}"
-        break
-      fi
-    done <"$file"
+  # Ensure directory and file exist
+  [ ! -d "$fileDir" ] && mkdir -p "$fileDir"
+  [ ! -f "$file" ] && touch "$file"
+
+  # === WRITE MODE ===
+  if [ -n "$newVer" ]; then
+    # Remove existing line (if any)
+    local escDir=${projectDir//\//\\/}
+    sed -i "/^$escDir:/d" "$file"
+    # Prepend new entry to top
+    sed -i "1i $projectDir:$newVer" "$file"
+    printf "Project PHP version set to ${_BOLD}%s" "$newVer"
+    return 0
   fi
 
-  if [ -z "$phpVer" ]; then
-    phpVer=$(_m2checkPhpVer)
-    echo "$PWD:$phpVer" >>"$file"
-  elif [[ -n $1 && $1 == "update" ]]; then
-    phpVer=$(_m2checkPhpVer)
-    sed -i "$line s|.*|$PWD:$phpVer|" "$file"
-    #sed -i "$line c$PWD:$phpVer" $file
+  # === READ MODE ===
+  local currentVer
+  currentVer=$(grep "^$projectDir:" "$file" | cut -d':' -f2)
+  if [ -n "$currentVer" ]; then
+    echo "$currentVer"
+    return 0
   fi
-  echo "$phpVer"
+  printf "${_BOLD}${_RED}Error:${_RESET} No PHP version has been set for directory: %s\n" "$projectDir" >&2
+  return 1
 }
 
-m2-gen-php-version() {
+# Usage: m2-gen-php-version php8.1
+m2-set-php-version() {
   if ism2dir; then
-    _m2phpVerFile 'update'
+    # Check missing or invalid format in one block
+    if [ -z "$1" ] || ! _is_php_version_format "$1"; then
+      echo "${_RED}${_BOLD}Invalid or missing argument.${_RESET}"
+      printf "%b\n" "Usage: m2-set-php-version phpx.y"
+      printf "%b\n" "Example: m2-set-php-version php8.1"
+      return 1
+    fi
+    _m2phpVer "$1"
   else
     _print_msg_not_m2_dir
     return 1
   fi
-}
-
-_m2checkPhpVer() {
-  if ! ism2dir; then
-    echo "php"
-    return
-  fi
-
-  for ver in '' 7.4 7.3 8.1; do
-    magentoVer=$(php$ver bin/magento -V | tail -n 1 | awk '{print $NF}' | cut -c1-5) >/dev/null 2>&1
-    if [[ $magentoVer =~ ^[0-9]+(\.[0-9]+){2,3}$ ]]; then
-      break
-    fi
-  done
-
-  case $magentoVer in
-  '2.3.5' | '2.3.6')
-    echo 'php7.3'
-    ;;
-  '2.3.7' | '2.4.0' | '2.4.1' | '2.4.2' | '2.4.3')
-    echo 'php7.4'
-    ;;
-  '2.4.6')
-    echo 'php8.2'
-    ;;
-  *)
-    echo 'php8.1'
-    ;;
-  esac
 }
 
 ##----------Completion----------##
@@ -113,7 +99,7 @@ _loadMagentoFilePathCompletion() {
 m2-gen-cli-completion() {
   if ism2dir; then
     _loadMagentoFilePathCompletion
-    rm -f "$filePath" && #nocorrect rm -i
+    rm -f "$filePath" &&  #nocorrect rm -i
       mkdir "$fileDir" && #nocorrect /bin/mkdir -p
       m2 --raw --no-ansi list | sed "s/[[:space:]].*//g" >"$filePath"
   else
@@ -140,29 +126,29 @@ _magento_autocomplete() {
       fi
     done
     case "$curW" in
-    module:enable)
-      # shellcheck disable=SC2046
-      compadd $(m2 module:status --disabled)
-      return
-      ;;
-    module:disable)
-      # shellcheck disable=SC2046
-      compadd $(m2 module:status --enabled)
-      return
-      ;;
-    indexer:reindex)
-      # shellcheck disable=SC2046
-      compadd $(m2 indexer:info | sed "s/[[:space:]].*//g")
-      return
-      ;;
-    deploy:mode:set)
-      compadd developer production default
-      return
-      ;;
-    admin:user:create)
-      compadd - --admin-user --admin-password --admin-email --admin-firstname --admin-lastname --magento-init-params
-      return
-      ;;
+      module:enable)
+        # shellcheck disable=SC2046
+        compadd $(m2 module:status --disabled)
+        return
+        ;;
+      module:disable)
+        # shellcheck disable=SC2046
+        compadd $(m2 module:status --enabled)
+        return
+        ;;
+      indexer:reindex)
+        # shellcheck disable=SC2046
+        compadd $(m2 indexer:info | sed "s/[[:space:]].*//g")
+        return
+        ;;
+      deploy:mode:set)
+        compadd developer production default
+        return
+        ;;
+      admin:user:create)
+        compadd - --admin-user --admin-password --admin-email --admin-firstname --admin-lastname --magento-init-params
+        return
+        ;;
     esac
     # shellcheck disable=SC2046
     compadd $(_magento_list_command)
@@ -179,12 +165,12 @@ n98-m2-gen-cli-completion() {
   _loadMagentoFilePathCompletion
   if ism2dir; then
     rm -f "$n98filePath" && #nocorrect rm -i
-      mkdir "$fileDir" && #nocorrect /bin/mkdir -p
-      n98 --raw --no-ansi list | sed "s/[[:space:]].*//g;/^$/d" >"$n98filePath"
+      mkdir "$fileDir" &&   #nocorrect /bin/mkdir -p
+      n98-m2 --raw --no-ansi list | sed "s/[[:space:]].*//g;/^$/d" >"$n98filePath"
   else
     rm -f "$rootDir/n98_cli" && #nocorrect rm -i
-      mkdir "$rootDir" && #nocorrect /bin/mkdir -p
-      n98 --raw --no-ansi list | sed "s/[[:space:]].*//g;/^$/d" >"$rootDir/n98_cli"
+      mkdir "$rootDir" &&       #nocorrect /bin/mkdir -p
+      n98-m2 --raw --no-ansi list | sed "s/[[:space:]].*//g;/^$/d" >"$rootDir/n98_cli"
     _print_msg_not_m2_dir
   fi
 }
