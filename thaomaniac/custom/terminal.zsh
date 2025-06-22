@@ -1,6 +1,8 @@
 #!/usr/bin/env zsh
 #-------------------------------------------------------------------------------
-# Copyright (c) 2025 thaomaniac <thaomaniac@gmail.com>
+# Copyright (c) 2025 ThaoManiac
+# Author: thaomaniac <thaomaniac@gmail.com>
+# Licensed under the MIT License
 #-------------------------------------------------------------------------------
 
 function _poweredBy() {
@@ -145,3 +147,7 @@ detect_terminal() {
     echo "unknown"
   fi
 }
+
+# Ctrl+W behavior:
+# Remove "-" from WORDCHARS so it deletes only the last part of a hyphenated word
+WORDCHARS=${WORDCHARS//-/}
