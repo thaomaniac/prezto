@@ -14,6 +14,8 @@ alias gf='git fetch'
 alias gfm='git pull'
 alias gm='git merge'
 alias gp='git push'
+alias gpc='git push --set-upstream origin "$(git-branch-current 2> /dev/null)"'
+alias grs='git reset'
 alias gs='git stash'
 
 ## Functions
