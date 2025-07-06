@@ -1,6 +1,8 @@
 #!/usr/bin/env zsh
 #-------------------------------------------------------------------------------
-# Copyright (c) 2025 thaomaniac <thaomaniac@gmail.com>
+# Copyright (c) 2025 ThaoManiac
+# Author: thaomaniac <thaomaniac@gmail.com>
+# Licensed under the MIT License
 #-------------------------------------------------------------------------------
 
 # Aliases
@@ -11,7 +13,7 @@ alias dkc='docker compose'
 # 0 true; 1 false
 # shellcheck disable=SC2120
 isDockerDir() {
-  if [[ -z $IS_DOCKER_DIR || $1 == "-f" ]]; then
+  if [[ -z $IS_DOCKER_DIR ]]; then
     IS_DOCKER_DIR=1
     local current_directory
     current_directory=$(pwd)
@@ -32,13 +34,60 @@ _print_msg_not_docker_dir() {
   echo "${_BOLD}${_YELLOW}Notice:${_RESET} Current directory is not a docker environment."
 }
 
-_check_docker_dir() {
-  unset IS_DOCKER_DIR
-  isDockerDir
-}
-add-zsh-hook chpwd _check_docker_dir
+# Load docker scripts and set up aliases
+_docker_scripts_load() {
+  [[ "$_DKCS_INITIALIZED" == true ]] && return
 
-dkc-script() {
+  # Define the function and aliases
+  dkc-script() { _dkc-script "$@"; }
+  alias dkc-composer=_composer-dkc composer-dkc=_composer-dkc
+  # Set up completion for function and aliases
+  compdef _dkc-script_completion dkc-script
+  compdef composer-dkc=composer dkc-composer=composer
+
+  # Dynamically create aliases for each script in the scripts directory
+  # shellcheck disable=SC2139
+  if [[ -d "$DOCKER_ROOT/scripts" ]]; then
+    _DYNAMIC_DKCS_ALIASES=()
+    # Iterate over each file in the scripts directory
+    for f in "$DOCKER_ROOT/scripts/"*(^-/); do
+      # Skip *.sh files
+      [[ "$f" == *.sh ]] && continue
+      local name="${f##*/}"
+      alias "dkcs-$name"="dkc-script $name"
+      _DYNAMIC_DKCS_ALIASES+=("dkcs-$name")
+    done
+    _DKCS_INITIALIZED=true
+  fi
+}
+
+# Unload docker scripts and remove aliases
+_docker_scripts_unload() {
+  [[ "$_DKCS_INITIALIZED" != true ]] && return
+  {
+    # Remove function and its completion
+    unfunction dkc-script
+    unalias dkc-composer composer-dkc
+    compdef -d dkc-script dkc-composer composer-dkc
+    # Remove dynamically created script aliases
+    ((${#_DYNAMIC_DKCS_ALIASES})) && unalias "${_DYNAMIC_DKCS_ALIASES[@]}"
+  } 2> /dev/null
+
+  _DYNAMIC_DKCS_ALIASES=()
+  _DKCS_INITIALIZED=false
+}
+
+# Initialize docker scripts based on current directory
+_init_docker_scripts() {
+  if isDockerDir; then
+    _docker_scripts_load
+  else
+    _docker_scripts_unload
+  fi
+}
+
+# Run a docker script from the scripts directory
+_dkc-script() {
   if isDockerDir; then
     scriptCommand=$1
     shift
@@ -48,6 +97,8 @@ dkc-script() {
     return 1
   fi
 }
+
+# Zsh completion for dkc-script
 _dkc-script_completion() {
   # Verify we're in a docker project directory
   isDockerDir || return 1
@@ -59,7 +110,7 @@ _dkc-script_completion() {
     # Process each script in the scripts directory
     for script in "$DOCKER_ROOT"/scripts/*(N); do
       # Extract description from script file (if exists)
-      local desc=$(grep -m1 "^# *DESCRIPTION:" "$script" 2>/dev/null | sed 's/^# *DESCRIPTION: *//')
+      local desc=$(grep -m1 "^# *DESCRIPTION:" "$script" 2> /dev/null | sed 's/^# *DESCRIPTION: *//')
 
       # Only include scripts that have descriptions
       [[ -n "$desc" ]] && scripts_with_desc+=("${script:t}:$desc")
@@ -82,7 +133,7 @@ _dkc-script_completion() {
           # Format: action:description
           actions+=("${match[1]}:${match[2]}")
         fi
-      done <"$script_path"
+      done < "$script_path"
 
       if ((${#actions[@]} > 0)); then
         # Show available actions with descriptions
@@ -101,21 +152,18 @@ _dkc-script_completion() {
   fi
 }
 
-# Define completion function for dkc-script
-compdef _dkc-script_completion dkc-script
-
 # Get mapped php version
 _dockerPhpVerFile() {
   local file="$DOCKER_ROOT/.php-map"
   local phpVer='php'
 
   if [ -f "$file" ]; then
-    while IFS=":" read -r folder php_version; do
+    while IFS=":" read -r folder php_version || [[ -n "$folder" ]]; do
       if [[ "$PWD" == *"/$folder" ]]; then
         phpVer=$php_version
         break
       fi
-    done <"$file"
+    done < "$file"
   fi
   echo "$phpVer"
 }
@@ -146,16 +194,13 @@ _docker_exec_cmd() {
 }
 
 ##---PHP Composer command with docker
-composer-dkc() {
+_composer-dkc() {
   if isDockerDir; then
     _docker_exec_cmd "composer $*"
   else
     _print_msg_not_docker_dir && return 1
   fi
 }
-alias dkc-composer=composer-dkc
-compdef composer-dkc=composer
-compdef dkc-composer=composer
 
 ##---Magento command with docker
 _m2-docker() {
@@ -182,3 +227,10 @@ n98-m2() {
     $(_phpVer) n98-magerun2.phar "$@"
   fi
 }
+
+## -- Hook to monitor directory changes
+_chpwd_hook_handler() {
+  unset IS_DOCKER_DIR && isDockerDir
+  _init_docker_scripts
+}
+add-zsh-hook chpwd _chpwd_hook_handler && _chpwd_hook_handler
