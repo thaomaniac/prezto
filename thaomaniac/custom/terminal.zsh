@@ -5,26 +5,57 @@
 # Licensed under the MIT License
 #-------------------------------------------------------------------------------
 
-function _poweredBy() {
-  echo 'IF9fX19fX19fIF9fX19fICBfX19fICBfXyAgX19fX19fICAgXyAgX19fX19fX19fICBfX19fXwov' | base64 -d
-  echo 'XyAgX18vIC8vIC8gXyB8LyBfXyBcLyAgfC8gIC8gXyB8IC8gfC8gLyAgXy8gXyB8LyBfX18vCiAv' | base64 -d
-  echo 'IC8gLyBfICAvIF9fIC8gL18vIC8gL3xfLyAvIF9fIHwvICAgIC8vIC8vIF9fIC8gL19fICAKL18v' | base64 -d
-  echo 'IC9fLy9fL18vIHxfXF9fX18vXy8gIC9fL18vIHxfL18vfF8vX19fL18vIHxfXF9fXy8gIAo=' | base64 -d
-  # http://patorjk.com/software/taag/#p=display&h=2&f=Small%20Slant&t=THAOMANIAC
-}
-function _greeting-tm() {
-  _poweredBy
-  # shellcheck disable=SC2028
-  echo "\n${_BOLD}${_BLINK}${USER_DISPLAY_NAME:-$USER}${_RESET} - $(date '+%Y-%m-%d %H:%M:%S') ${_BLINK}-${_RESET} $(lsb_release -sd)\n"
-}
-_greeting-tm
+_motd_banner() {
+  local custom_text="$MOTD_BANNER_TEXT"
+  local font="smslant"
+  local final_output=""
 
-_set-window-title-tm() {
+  _get_default() {
+    DEFAULT_LOGO_B64="IF9fX19fX19fIF9fX19fICBfX19fICBfXyAgX19fX19fICAgXyAgX19fX19fX19fICBfX19fXwov"
+    DEFAULT_LOGO_B64+="XyAgX18vIC8vIC8gXyB8LyBfXyBcLyAgfC8gIC8gXyB8IC8gfC8gLyAgXy8gXyB8LyBfX18vCiAv"
+    DEFAULT_LOGO_B64+="IC8gLyBfICAvIF9fIC8gL18vIC8gL3xfLyAvIF9fIHwvICAgIC8vIC8vIF9fIC8gL19fICAKL18v"
+    DEFAULT_LOGO_B64+="IC9fLy9fL18vIHxfXF9fX18vXy8gIC9fL18vIHxfL18vfF8vX19fL18vIHxfXF9fXy8gIAo="
+    # http://patorjk.com/software/taag/#p=display&h=2&f=Small%20Slant&t=THAOMANIAC
+
+    echo "$DEFAULT_LOGO_B64" | base64 -d 2> /dev/null
+  }
+
+  if [ -z "$custom_text" ]; then
+    final_output=$(_get_default)
+  else
+    if command -v figlet > /dev/null; then
+      final_output=$(figlet -f "$font" "$custom_text" 2> /dev/null)
+    elif command -v toilet > /dev/null; then
+      final_output=$(toilet -f "$font" "$custom_text" 2> /dev/null)
+    fi
+    # Trim leading/trailing whitespace
+    final_output="${final_output%"${final_output##*[![:space:]]}"}"
+    if [ -z "$final_output" ]; then
+      final_output=$(_get_default)
+    fi
+  fi
+
+  echo "$final_output"
+}
+
+function _motd_greeting() {
+  local use_lolcat="$MOTD_LOLCAT"
+  if [ "$use_lolcat" = "1" ] && command -v lolcat > /dev/null; then
+    _motd_banner | lolcat
+  else
+    _motd_banner
+  fi
+  # shellcheck disable=SC2028
+  echo "\n${_BOLD}${_BLINK}${MOTD_DISPLAY_NAME:-$USER}${_RESET} - $(date '+%Y-%m-%d %H:%M:%S') ${_BLINK}-${_RESET} $(lsb_release -sd)\n"
+}
+_motd_greeting
+
+_get-window-title-tm() {
   local title
   local trimPwdPatterns=(
     "[^/]*/www/[^/]*/www/"
     "$HOME/www/"
-  ) 2>/dev/null
+  ) 2> /dev/null
   title="${PWD/#$HOME/~}"
   for regex in "${trimPwdPatterns[@]}"; do
     if [[ $PWD =~ $regex ]]; then
@@ -34,8 +65,13 @@ _set-window-title-tm() {
       break
     fi
   done
-  printf '\e]2;%s\a' "$title"
+  echo "$title"
 }
+
+_set-window-title-tm() {
+  printf '\e]2;%s\a' "$(_get-window-title-tm)"
+}
+
 _set-window-title-tm
 add-zsh-hook chpwd _set-window-title-tm
 
