@@ -11,8 +11,8 @@ alias gb='git branch'
 alias gcm='git commit --message'
 alias gco='git checkout'
 alias gf='git fetch'
-alias gfm='git pull'
 alias gm='git merge'
+alias gfm='git pull'
 alias gp='git push'
 alias gpc='git push --set-upstream origin "$(git-branch-current 2> /dev/null)"'
 alias grs='git reset'
@@ -42,50 +42,83 @@ commit() {
   fi
 }
 
-# Git commit with custom date
+# Git commit with custom date/time
 # Usage:
-#   gcm-at -t "YYYY-MM-DD HH:MM:SS" -m "Commit message"
+#   gcm-at -t "YYYY-MM-DD HH:MM:SS" -m "Commit message"  # full datetime
+#   gcm-at -t "2025-01-01" -m "msg"                       # date only, uses current time
+#   gcm-at -t "09:00:00" -m "msg"                         # time only, uses today's date
 # Notes:
-#   - Time should be in the format "YYYY-MM-DD HH:MM:SS"
+#   - Auto-detects date vs time vs full datetime from -t value
 #   - The commit will use this time as both AuthorDate and CommitDate
 gcm-at() {
 
   usage() {
-    echo "Usage: gcm-at -t \"YYYY-MM-DD HH:MM:SS\" -m \"commit message\""
-    echo "  -t: Time for commit (format: YYYY-MM-DD HH:MM:SS)"
+    echo "Usage: gcm-at -t <datetime> -m \"commit message\""
+    echo "  -t: Date and/or time for commit. Auto-detected format:"
+    echo "      \"YYYY-MM-DD HH:MM:SS\"  full datetime"
+    echo "      \"YYYY-MM-DD HH:MM\"     full datetime (seconds default to 00)"
+    echo "      \"YYYY-MM-DD\"           date only (time defaults to now)"
+    echo "      \"MM-DD\"               date only (year defaults to current year)"
+    echo "      \"MM-DD HH:MM:SS\"       datetime (year defaults to current year)"
+    echo "      \"MM-DD HH:MM\"          datetime (year + seconds default)"
+    echo "      \"HH:MM:SS\"             time only (date defaults to today)"
+    echo "      \"HH:MM\"               time only (seconds default to 00)"
     echo "  -m: Commit message"
     echo "  -h: Show this help message"
   }
 
-  local date message
+  local input message
+  OPTIND=1
 
-  # Parse flags for time (-t) and message (-m)
   while getopts "t:m:h" opt; do
     case $opt in
-      t)
-        date="$OPTARG"
-        ;;
-      m)
-        message="$OPTARG"
-        ;;
-      h)
-        usage
-        return 0
-        ;;
-      *)
-        usage
-        return 1
-        ;;
+      t) input="$OPTARG" ;;
+      m) message="$OPTARG" ;;
+      h) usage; return 0 ;;
+      *) usage; return 1 ;;
     esac
   done
 
-  # Check if both date and message are provided
-  if [[ -z "$date" || -z "$message" ]]; then
+  if [[ -z "$input" || -z "$message" ]]; then
     usage
     return 1
   fi
 
-  GIT_AUTHOR_DATE="$date" GIT_COMMITTER_DATE="$date" git commit -m "$message"
+  local commit_date commit_time
+
+  # Normalize MM-DD to YYYY-MM-DD (prepend current year)
+  if [[ "$input" =~ ^([0-9]{2})-([0-9]{2})(\ .*|$) ]]; then
+    input="$(date +%Y)-${match[1]}-${match[2]}${match[3]}"
+  fi
+
+  if [[ "$input" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}\ [0-9]{2}:[0-9]{2}:[0-9]{2}$ ]]; then
+    # Full datetime: YYYY-MM-DD HH:MM:SS
+    commit_date="${input%% *}"
+    commit_time="${input##* }"
+  elif [[ "$input" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}\ [0-9]{2}:[0-9]{2}$ ]]; then
+    # Datetime without seconds: YYYY-MM-DD HH:MM
+    commit_date="${input%% *}"
+    commit_time="${input##* }:00"
+  elif [[ "$input" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+    # Date only
+    commit_date="$input"
+    commit_time=$(date +%H:%M:%S)
+  elif [[ "$input" =~ ^[0-9]{2}:[0-9]{2}:[0-9]{2}$ ]]; then
+    # Time with seconds: HH:MM:SS
+    commit_date=$(date +%Y-%m-%d)
+    commit_time="$input"
+  elif [[ "$input" =~ ^[0-9]{2}:[0-9]{2}$ ]]; then
+    # Time without seconds: HH:MM
+    commit_date=$(date +%Y-%m-%d)
+    commit_time="$input:00"
+  else
+    echo "Error: unrecognized format '$input'"
+    usage
+    return 1
+  fi
+
+  local datetime="$commit_date $commit_time"
+  GIT_AUTHOR_DATE="$datetime" GIT_COMMITTER_DATE="$datetime" git commit -m "$message"
 }
 
 # Create a merge request (MR) or pull request (PR) URL
