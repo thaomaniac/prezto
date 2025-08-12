@@ -1,0 +1,296 @@
+#compdef shopify
+
+# Shopify CLI completion script
+# Comprehensive completion for shopify theme commands
+
+_shopify_theme() {
+  local -a theme_commands
+  theme_commands=(
+    'check:Validate your theme'
+    'console:Start a Shopify Liquid console'
+    'delete:Delete a theme from your store'
+    'dev:Start a local development server'
+    'info:Display information about your theme'
+    'init:Create a new theme'
+    'language-server:Start a Shopify Liquid language server'
+    'list:List all themes on your store'
+    'open:Open your theme in the Shopify theme editor'
+    'package:Package your theme into a ZIP file'
+    'publish:Publish a theme to your store'
+    'pull:Download your theme files from Shopify'
+    'push:Upload your theme files to Shopify'
+    'rename:Rename a theme on your store'
+    'share:Create a shareable preview link'
+  )
+
+  local -a global_flags
+  global_flags=(
+    '--help[Show help information]'
+    '--version[Show version information]'
+    '--verbose[Show verbose output]'
+    '--no-color[Disable color output]'
+  )
+
+  local -a common_theme_flags
+  common_theme_flags=(
+    '--store[Store URL]:store:_shopify_stores'
+    '--password[Theme password]:password:'
+    '--theme[Theme ID or name]:theme:_shopify_themes'
+    '--development[Use development theme]'
+    '--live[Use live theme]'
+    '--unpublished[Use unpublished theme]'
+    '--path[Path to theme directory]:path:_files -/'
+    '--environment[Environment name]:environment:'
+  )
+
+  _arguments -C \
+    '1: :->command' \
+    '*:: :->args' \
+    && return 0
+
+  case $state in
+    command)
+      _describe -t commands 'shopify theme commands' theme_commands
+      ;;
+    args)
+      case $words[1] in
+        check)
+          _arguments \
+            '(-a --auto-correct)'{-a,--auto-correct}'[Automatically fix offenses]' \
+            '(-C --config)'{-C,--config}'[Config to use]:config:' \
+            '(-e --environment)'{-e,--environment}'[Environment to apply]:environment:' \
+            '--fail-level[Minimum severity for exit with error code]:level:(error suggestion style)' \
+            '--init[Generate a .theme-check.yml file]' \
+            '--list[List enabled checks]' \
+            '--no-color[Disable color output]' \
+            '(-o --output)'{-o,--output}'[Output format]:format:(text json)' \
+            '--path[Path to theme directory]:path:_files -/' \
+            '--print[Output active config to STDOUT]' \
+            '(-v --version)'{-v,--version}'[Print Theme Check version]' \
+            '--verbose[Increase verbosity]'
+          ;;
+        console)
+          _arguments \
+            '(-e --environment)'{-e,--environment}'[Environment to apply]:environment:' \
+            '(-p --password)'{-p,--password}'[Theme password]:password:' \
+            '(-s --store)'{-s,--store}'[Store URL]:store:' \
+            '(-u --url)'{-u,--url}'[Specific URL to fetch]:url:' \
+            '--verbose[Show verbose output]' \
+            '--version[Show version information]' \
+            '--help[Show help information]'
+          ;;
+        delete)
+          _arguments \
+            '(-d --development)'{-d,--development}'[Delete development theme]' \
+            '(-e --environment)'{-e,--environment}'[Environment to apply]:environment:' \
+            '(-f --force)'{-f,--force}'[Skip confirmation]' \
+            '(-p --password)'{-p,--password}'[Theme password]:password:' \
+            '(-s --store)'{-s,--store}'[Store URL]:store:' \
+            '(-t --theme)'{-t,--theme}'[Theme ID or name to delete]:theme:' \
+            '--verbose[Show verbose output]' \
+            '--version[Show version information]' \
+            '--help[Show help information]'
+          ;;
+        dev)
+          _arguments \
+            '(-a --allow-live)'{-a,--allow-live}'[Allow development on a live theme]' \
+            '(-e --environment)'{-e,--environment}'[Environment to apply]:environment:' \
+            '--error-overlay[Error overlay visibility]:mode:(silent default)' \
+            '--host[Network interface]:host:' \
+            '--live-reload[Hot reload mode]:mode:(hot-reload full-page off)' \
+            '(-n --nodelete)'{-n,--nodelete}'[Do not delete remote files]' \
+            '--no-color[Disable color output]' \
+            '--notify[File path or URL to notify]:file:_files' \
+            '(-o --only)'{-o,--only}'[Sync only specified files]:pattern:' \
+            '--open[Open browser automatically]' \
+            '(-p --password)'{-p,--password}'[Theme password]:password:' \
+            '--path[Path to theme directory]:path:_files -/' \
+            '--poll[Use polling instead of file system events]' \
+            '--port[Custom port]:port:' \
+            '(-s --store)'{-s,--store}'[Store URL]:store:' \
+            '--store-password[Store password]:password:' \
+            '(-t --theme)'{-t,--theme}'[Theme ID or name]:theme:' \
+            '--theme-editor-sync[Sync changes from theme editor]' \
+            '--verbose[Increase verbosity]' \
+            '(-x --ignore)'{-x,--ignore}'[Ignore specified files]:pattern:'
+          ;;
+        info)
+          _arguments \
+            '(-d --development)'{-d,--development}'[Show development theme info]' \
+            '(-e --environment)'{-e,--environment}'[Environment to apply]:environment:' \
+            '--json[Output as JSON]' \
+            '(-p --password)'{-p,--password}'[Theme password]:password:' \
+            '(-s --store)'{-s,--store}'[Store URL]:store:' \
+            '(-t --theme)'{-t,--theme}'[Theme ID or name]:theme:' \
+            '--verbose[Show verbose output]' \
+            '--version[Show version information]' \
+            '--help[Show help information]'
+          ;;
+        init)
+          _arguments \
+            '1:name:' \
+            '(-c --clone)'{-c,--clone}'[Clone from URL]:url:' \
+            '(-l --latest)'{-l,--latest}'[Use latest theme version]' \
+            '--path[Path to create theme]:path:_files -/' \
+            '--verbose[Show verbose output]' \
+            '--version[Show version information]' \
+            '--help[Show help information]'
+          ;;
+        language-server)
+          _arguments \
+            $global_flags
+          ;;
+        list)
+          _arguments \
+            '(-e --environment)'{-e,--environment}'[Environment to apply]:environment:' \
+            '--id[Show theme IDs]' \
+            '--json[Output as JSON]' \
+            '--name[Show theme names]' \
+            '(-p --password)'{-p,--password}'[Theme password]:password:' \
+            '--role[Show theme roles]' \
+            '(-s --store)'{-s,--store}'[Store URL]:store:' \
+            '--verbose[Show verbose output]' \
+            '--version[Show version information]' \
+            '--help[Show help information]'
+          ;;
+        open)
+          _arguments \
+            '(-d --development)'{-d,--development}'[Open development theme]' \
+            '(-E --editor)'{-E,--editor}'[Open in theme editor]' \
+            '(-e --environment)'{-e,--environment}'[Environment to apply]:environment:' \
+            '(-l --live)'{-l,--live}'[Open live theme]' \
+            '(-p --password)'{-p,--password}'[Theme password]:password:' \
+            '(-s --store)'{-s,--store}'[Store URL]:store:' \
+            '(-t --theme)'{-t,--theme}'[Theme ID or name]:theme:' \
+            '--verbose[Show verbose output]' \
+            '--version[Show version information]' \
+            '--help[Show help information]'
+          ;;
+        package)
+          _arguments \
+            '--path[Path to theme directory]:path:_files -/' \
+            '--verbose[Show verbose output]' \
+            '--version[Show version information]' \
+            '--help[Show help information]'
+          ;;
+        publish)
+          _arguments \
+            '(-e --environment)'{-e,--environment}'[Environment to apply]:environment:' \
+            '(-f --force)'{-f,--force}'[Skip confirmation]' \
+            '(-p --password)'{-p,--password}'[Theme password]:password:' \
+            '(-s --store)'{-s,--store}'[Store URL]:store:' \
+            '(-t --theme)'{-t,--theme}'[Theme ID or name to publish]:theme:' \
+            '--verbose[Show verbose output]' \
+            '--version[Show version information]' \
+            '--help[Show help information]'
+          ;;
+        pull)
+          _arguments \
+            '(-d --development)'{-d,--development}'[Pull development theme]' \
+            '(-e --environment)'{-e,--environment}'[Environment to apply]:environment:' \
+            '(-l --live)'{-l,--live}'[Pull live theme]' \
+            '(-n --nodelete)'{-n,--nodelete}'[Do not delete local files]' \
+            '(-o --only)'{-o,--only}'[Pull only specified files]:pattern:' \
+            '(-p --password)'{-p,--password}'[Theme password]:password:' \
+            '--path[Path to theme directory]:path:_files -/' \
+            '(-s --store)'{-s,--store}'[Store URL]:store:' \
+            '(-t --theme)'{-t,--theme}'[Theme ID or name]:theme:' \
+            '(-x --ignore)'{-x,--ignore}'[Ignore specified files]:pattern:' \
+            '--verbose[Show verbose output]' \
+            '--version[Show version information]' \
+            '--help[Show help information]'
+          ;;
+        push)
+          _arguments \
+            '(-a --allow-live)'{-a,--allow-live}'[Allow push to a live theme]' \
+            '(-d --development)'{-d,--development}'[Push to development theme]' \
+            '(-e --environment)'{-e,--environment}'[Environment to apply]:environment:' \
+            '(-j --json)'{-j,--json}'[Output as JSON]' \
+            '(-l --live)'{-l,--live}'[Push to live theme]' \
+            '(-n --nodelete)'{-n,--nodelete}'[Prevent deleting remote files]' \
+            '--no-color[Disable color output]' \
+            '(-o --only)'{-o,--only}'[Upload only specified files]:pattern:' \
+            '(-p --password)'{-p,--password}'[Theme password]:password:' \
+            '--path[Path to theme directory]:path:_files -/' \
+            '(-p --publish)'{-p,--publish}'[Publish as live theme after upload]' \
+            '(-s --store)'{-s,--store}'[Store URL]:store:' \
+            '--strict[Require theme check to pass]' \
+            '(-t --theme)'{-t,--theme}'[Theme ID or name]:theme:' \
+            '(-u --unpublished)'{-u,--unpublished}'[Create new unpublished theme]' \
+            '--verbose[Increase verbosity]' \
+            '(-x --ignore)'{-x,--ignore}'[Skip uploading specified files]:pattern:'
+          ;;
+        rename)
+          _arguments \
+            '(-e --environment)'{-e,--environment}'[Environment to apply]:environment:' \
+            '(-n --name)'{-n,--name}'[New theme name]:name:' \
+            '(-p --password)'{-p,--password}'[Theme password]:password:' \
+            '(-s --store)'{-s,--store}'[Store URL]:store:' \
+            '(-t --theme)'{-t,--theme}'[Theme ID or name to rename]:theme:' \
+            '--verbose[Show verbose output]' \
+            '--version[Show version information]' \
+            '--help[Show help information]'
+          ;;
+        share)
+          _arguments \
+            '(-d --development)'{-d,--development}'[Share development theme]' \
+            '(-e --environment)'{-e,--environment}'[Environment to apply]:environment:' \
+            '(-p --password)'{-p,--password}'[Theme password]:password:' \
+            '(-s --store)'{-s,--store}'[Store URL]:store:' \
+            '(-t --theme)'{-t,--theme}'[Theme ID or name]:theme:' \
+            '--verbose[Show verbose output]' \
+            '--version[Show version information]' \
+            '--help[Show help information]'
+          ;;
+      esac
+      ;;
+  esac
+}
+
+# Helper function to list stores (can be customized)
+_shopify_stores() {
+  # This could be enhanced to read from config files
+  # For now, it's a placeholder
+  _message 'store URL (e.g., mystore.myshopify.com)'
+}
+
+# Helper function to list themes (can be customized)
+_shopify_themes() {
+  # This could be enhanced to fetch actual themes
+  # For now, it's a placeholder
+  _message 'theme ID or name'
+}
+
+# Main completion function
+_shopify() {
+  local -a commands
+  commands=(
+    'theme:Manage your Shopify themes'
+    'app:Manage your Shopify apps'
+    'auth:Authenticate with Shopify'
+    'config:Manage CLI configuration'
+    'help:Show help information'
+    'version:Show version information'
+  )
+
+  _arguments -C \
+    '1: :->command' \
+    '*:: :->args' \
+    && return 0
+
+  case $state in
+    command)
+      _describe -t commands 'shopify commands' commands
+      ;;
+    args)
+      case $words[1] in
+        theme)
+          _shopify_theme
+          ;;
+        *)
+          _message 'no more arguments'
+          ;;
+      esac
+      ;;
+  esac
+}

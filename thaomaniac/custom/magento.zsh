@@ -1,6 +1,8 @@
 #!/usr/bin/env zsh
 #-------------------------------------------------------------------------------
-# Copyright (c) 2025 thaomaniac <thaomaniac@gmail.com>
+# Copyright (c) 2025 ThaoManiac
+# Author: thaomaniac <thaomaniac@gmail.com>
+# Licensed under the MIT License
 #-------------------------------------------------------------------------------
 
 ##----------Magento command----------##
@@ -88,110 +90,10 @@ m2-set-php-version() {
   fi
 }
 
-##----------Completion----------##
-
-_loadMagentoFilePathCompletion() {
-  rootDir="$ZTMDIR/local/magento/completion"
-  fileDir="$rootDir$PWD"
-  filePath="$fileDir/m2_cli"
-  n98filePath="$fileDir/n98_cli"
-}
-m2-gen-cli-completion() {
-  if ism2dir; then
-    _loadMagentoFilePathCompletion
-    rm -f "$filePath" &&  #nocorrect rm -i
-      mkdir "$fileDir" && #nocorrect /bin/mkdir -p
-      m2 --raw --no-ansi list | sed "s/[[:space:]].*//g" >"$filePath"
-  else
-    _print_msg_not_m2_dir
-    return 1
-  fi
-}
-
-# magento
-_magento_list_command() {
-  #  m2 --raw --no-ansi list | sed "s/[[:space:]].*//g"
-  _loadMagentoFilePathCompletion
-  if [[ -s $filePath ]]; then
-    cat "$filePath"
-  fi
-}
-_magento_autocomplete() {
-  if ism2dir; then
-    # shellcheck disable=SC2154
-    for word in "${words[@]:1}"; do
-      if [[ $word != -* ]]; then
-        curW=$word
-        break
-      fi
-    done
-    case "$curW" in
-      module:enable)
-        # shellcheck disable=SC2046
-        compadd $(m2 module:status --disabled)
-        return
-        ;;
-      module:disable)
-        # shellcheck disable=SC2046
-        compadd $(m2 module:status --enabled)
-        return
-        ;;
-      indexer:reindex)
-        # shellcheck disable=SC2046
-        compadd $(m2 indexer:info | sed "s/[[:space:]].*//g")
-        return
-        ;;
-      deploy:mode:set)
-        compadd developer production default
-        return
-        ;;
-      admin:user:create)
-        compadd - --admin-user --admin-password --admin-email --admin-firstname --admin-lastname --magento-init-params
-        return
-        ;;
-    esac
-    # shellcheck disable=SC2046
-    compadd $(_magento_list_command)
-  fi
-}
-compdef _magento_autocomplete m2 bin/magento
-
 # netz98 magerun CLI tools for Magento 2 https://github.com/netz98/n98-magerun2
 n98-m2() {
   "$(_phpVer)" /usr/local/bin/n98-magerun2.phar "$@"
 }
 
-n98-m2-gen-cli-completion() {
-  _loadMagentoFilePathCompletion
-  if ism2dir; then
-    rm -f "$n98filePath" && #nocorrect rm -i
-      mkdir "$fileDir" &&   #nocorrect /bin/mkdir -p
-      n98-m2 --raw --no-ansi list | sed "s/[[:space:]].*//g;/^$/d" >"$n98filePath"
-  else
-    rm -f "$rootDir/n98_cli" && #nocorrect rm -i
-      mkdir "$rootDir" &&       #nocorrect /bin/mkdir -p
-      n98-m2 --raw --no-ansi list | sed "s/[[:space:]].*//g;/^$/d" >"$rootDir/n98_cli"
-    _print_msg_not_m2_dir
-  fi
-}
-
-#compdef n98-magerun2.phar
-_n98_magerun2_list_command() {
-  _loadMagentoFilePathCompletion
-  if ism2dir; then
-    if [[ -s "$n98filePath" ]]; then
-      cat "$n98filePath"
-    fi
-  else
-    if [[ -s "$rootDir/n98_cli" ]]; then
-      cat "$rootDir/n98_cli"
-    fi
-  fi
-}
-
-_n98_magerun2_autocomplete() {
-  # shellcheck disable=SC2046
-  compadd $(_n98_magerun2_list_command)
-}
-compdef _n98_magerun2_autocomplete n98-m2 n98-magerun2.phar
-##----------END Completion----------##
+##----------Completion----------##
+[[ -f "$ZTMDIR/custom/completions/_magento" ]] && source "$ZTMDIR/custom/completions/_magento"

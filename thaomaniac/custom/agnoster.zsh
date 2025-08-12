@@ -1,6 +1,8 @@
 #!/usr/bin/env zsh
 #-------------------------------------------------------------------------------
-# Copyright (c) 2025 thaomaniac <thaomaniac@gmail.com>
+# Copyright (c) 2025 ThaoManiac
+# Author: thaomaniac <thaomaniac@gmail.com>
+# Licensed under the MIT License
 #-------------------------------------------------------------------------------
 
 ###----------Agnoster theme - Rewrite Prompt components----------###
