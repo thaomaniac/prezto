@@ -38,3 +38,6 @@
 [submodule "thaomaniac/plugins/zsh-z"]
 	path = thaomaniac/plugins/zsh-z
 	url = https://github.com/agkozak/zsh-z.git
+[submodule "thaomaniac/plugins/zsh-nvm"]
+	path = thaomaniac/plugins/zsh-nvm
+	url = https://github.com/lukechilds/zsh-nvm.git
