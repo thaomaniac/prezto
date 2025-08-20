@@ -115,6 +115,16 @@ elapsed_precmd() {
   fi
 }
 showTimePrompt() {
+  if [[ "$1" == "-h" ]]; then
+    echo "Usage: showTimePrompt [elapsed] [timestamp]"
+    echo "  No args:        enable both elapsed time and timestamp"
+    echo "  showTimePrompt 1    enable elapsed time only"
+    echo "  showTimePrompt 1 1  enable both"
+    echo "  showTimePrompt 0 1  enable timestamp only"
+    echo "  showTimePrompt 0    disable all"
+    return 0
+  fi
+
   unset SHOW_TIMESTAMP
   unset SHOW_ELAPSED
   unset RPROMPT
@@ -124,12 +134,8 @@ showTimePrompt() {
     SHOW_TIMESTAMP=1
     SHOW_ELAPSED=1
   else
-    if [[ $1 == 1 ]]; then
-      SHOW_ELAPSED=1
-    fi
-    if [[ $2 == 1 ]]; then
-      SHOW_TIMESTAMP=1
-    fi
+    [[ $1 == 1 ]] && SHOW_ELAPSED=1
+    [[ $2 == 1 ]] && SHOW_TIMESTAMP=1
   fi
 }
 add-zsh-hook preexec elapsed_preexec
@@ -151,7 +157,7 @@ _print_new_line_preexec() {
 _print_new_line_precmd() {
   if [[ "$pnl_newline" == true ]]; then
     echo # Print a blank line
-    if [[ "$(detect_terminal)" == "ubuntu" ]]; then
+    if [[ "$_DETECTED_TERMINAL" == "ubuntu" ]]; then
       draw_horizontal_line "─"
     fi
     unset pnl_newline
@@ -183,6 +189,8 @@ detect_terminal() {
     echo "unknown"
   fi
 }
+# Cache once at load time — terminal emulator doesn't change during a session
+_DETECTED_TERMINAL=$(detect_terminal)
 
 # Ctrl+W behavior:
 # Remove "-" from WORDCHARS so it deletes only the last part of a hyphenated word

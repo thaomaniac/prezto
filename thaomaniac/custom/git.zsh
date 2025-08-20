@@ -33,11 +33,11 @@ commit() {
     return 1
   fi
   if [[ $# != 1 ]]; then
-    echo "${_BOLD}${_RED}TypeScript Error:${_RESET} Expected 1 arguments, but got $#!"
+    echo "${_BOLD}${_RED}Error:${_RESET} Expected 1 argument, but got $#."
+    echo "Usage: commit \"Commit message\""
     return 1
   else
-    # shellcheck disable=SC2155
-    local msg=$(echo "$1" | cut -c1 | command tr a-z A-Z)$(echo "$1" | cut -c2-)
+    local msg="${1[1]:u}${1[2,-1]}" # bash: "${1^}"
     git commit -m "$branch: $msg"
   fi
 }
@@ -126,11 +126,11 @@ gmr-cr() {
 
   usage() {
     echo "Usage:
-    gmrcr -t <target_branch>                     # use current branch as source
-    gmrcr -s <source_branch>                     # use current branch as target
-    gmrcr -s <source_branch> -t <target_branch>  # specify both branches
-    gmrcr -s<source_branch> -t<target_branch>    # specify both branches
-    gmrcr -o --open                              # open URL in browser"
+    gmr-cr -t <target_branch>                     # use current branch as source
+    gmr-cr -s <source_branch>                     # use current branch as target
+    gmr-cr -s <source_branch> -t <target_branch>  # specify both branches
+    gmr-cr -s<source_branch> -t<target_branch>    # specify both branches
+    gmr-cr -o --open                              # open URL in browser"
   }
 
   local remote_name="origin"
