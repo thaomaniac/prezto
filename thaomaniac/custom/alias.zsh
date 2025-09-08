@@ -15,6 +15,33 @@ if type "colorls" > /dev/null; then
   alias ls='colorls --indicator-style=none --color=never'
 fi
 
+## List network connections
+## Usage: ports [filter]
+ports() {
+  if [[ "$1" == "-h" ]]; then
+    echo "Usage: ports [filter]"
+    echo "  ports          list all network connections"
+    echo "  ports 3000     filter by port number"
+    echo "  ports nginx    filter by process name"
+    return 0
+  fi
+
+  local output
+  output=$(sudo lsof -i -P -n 2>/dev/null)
+
+  if [[ -z "$output" ]]; then
+    echo -e "${_YELLOW}No connections found${_RESET}"
+    return 0
+  fi
+
+  if [[ -n "$1" ]]; then
+    echo "$output" | head -1
+    echo "$output" | tail -n +2 | grep -i --color=auto "$1"
+  else
+    echo "$output"
+  fi
+}
+
 ## Kill process by name pattern
 kill-process-name() {
 

@@ -42,6 +42,27 @@ commit() {
   fi
 }
 
+
+# Pretty git log graph
+git-graph() {
+  if [[ "$1" == "-h" ]]; then
+    echo "Usage: git-graph [git-log options]"
+    echo "  git-graph              pretty git log graph"
+    echo "  git-graph -n 10        last 10 commits"
+    echo "  git-graph --since=1w   last week"
+    return 0
+  fi
+
+  if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+    echo -e "${_RED}Not a git repository${_RESET}" >&2
+    return 1
+  fi
+
+  git log --graph --abbrev-commit --decorate \
+    --format=format:'%C(bold yellow)%h%C(reset) %C(bold cyan)%ad%C(reset) %C(bold white)│%C(reset) %C(magenta)%G?%C(reset) %s %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' \
+    --date=format:'%Y-%m-%d %H:%M' "$@"
+}
+
 # Git commit with custom date/time
 # Usage:
 #   gcm-at -t "YYYY-MM-DD HH:MM:SS" -m "Commit message"  # full datetime
