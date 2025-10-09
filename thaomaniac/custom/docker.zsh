@@ -144,12 +144,53 @@ _dkc-script_completion() {
       fi
     fi
 
-    # Level 3+ Completion: Action arguments (placeholder for future extension)
+    # Level 3+ Completion: Action arguments
   elif ((CURRENT >= 4)); then
-    # Currently just suggests files, can be enhanced later
-    _arguments \
-      '*:files:_files' && return 0
+    local script_name=${words[2]}
+    local action=${words[3]}
+
+    # Dispatch to script-specific completions
+    local handler="_dkc-script_complete_${script_name}"
+    if (( $+functions[$handler] )); then
+      "$handler" "$action" && return 0
+    fi
+
+    _files
   fi
+}
+
+# ── database script completions ──────────────────────────────────────────────
+
+# Completion handler for: dkc-script database <action> <args...>
+_dkc-script_complete_database() {
+  local action=$1
+
+  case "$action" in
+    exec|drop|export|import)
+      # Arg 1: database name
+      ((CURRENT == 4)) && { _dkc-script_complete_database_names; return }
+      # Arg 2: file path (export target / import source)
+      ((CURRENT == 5)) && [[ "$action" =~ ^(export|import)$ ]] && { _files; return }
+      ;;
+  esac
+
+  return 1
+}
+
+# Complete with database names queried from Docker MySQL/MariaDB
+_dkc-script_complete_database_names() {
+  local -a db_names=("${(@f)$(_dkc-script_query_database_names 2>/dev/null)}")
+  (( ${#db_names} )) && _describe 'databases' db_names
+}
+
+# Query database names via the database script
+_dkc-script_query_database_names() {
+  local -a system_dbs=(information_schema mysql performance_schema sys)
+
+  local db
+  for db in ${(f)"$("$DOCKER_ROOT/scripts/database" list --skip-column-names 2>/dev/null)"}; do
+    (( ${system_dbs[(Ie)$db]} )) || echo "$db"
+  done
 }
 
 # Get mapped php version
