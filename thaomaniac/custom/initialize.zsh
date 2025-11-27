@@ -38,6 +38,13 @@ function _tmcustomload {
       source "$file"
     fi
   done
+  
+  # load local completion
+  for file in "$ZTMDIR"/local/completions/*(N); do
+    if [[ -f $file ]]; then
+      source "$file"
+    fi
+  done
 
   # load external plugins
   local plugin
