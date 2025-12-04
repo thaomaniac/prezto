@@ -148,7 +148,8 @@ function sscp() {
     return 1
   fi
 
-  echo $'\033[0;33m'"Executing command: $final_cmd"$'\033[0m'
+  echo "Executing command:"
+  echo "  ${_YELLOW}${final_cmd}${_RESET}"
   eval "$final_cmd"
 }
 
@@ -185,14 +186,39 @@ function ssrsync() {
     echo "  Upload:    ssrsync evp-staging ~/local/dir :/remote/dir"
   }
 
-  for arg in "$@"; do
+  # rsync options that take a separate value argument (not --opt=val form)
+  local -A _rsync_valued_opts
+  _rsync_valued_opts=(
+    --exclude 1 --include 1 --exclude-from 1 --include-from 1
+    --filter 1 -f 1 --files-from 1 --bwlimit 1 --timeout 1
+    --max-size 1 --min-size 1 --max-delete 1 --partial-dir 1
+    --temp-dir 1 -T 1 --link-dest 1 --copy-dest 1 --compare-dest 1
+    --suffix 1 --log-file 1 --log-file-format 1 --password-file 1
+    --chmod 1 --chown 1 --block-size 1 -B 1
+    --out-format 1 --log-format 1 --address 1 --port 1
+    --usermap 1 --groupmap 1 --compress-level 1 --read-batch 1
+    --write-batch 1 --only-write-batch 1
+  )
+
+  local i=1
+  while [[ $i -le $# ]]; do
+    local arg="${@[$i]}"
     if [[ "$arg" == "-h" || "$arg" == "--help" ]]; then
       _ssrsync_show_help
       return 0
     elif [[ "$arg" == -* ]]; then
-      rsync_opts+=("$arg")
+      # if option takes a value and is not in --opt=val form, consume next arg too
+      local opt_key="${arg%%=*}"
+      if [[ -n "${_rsync_valued_opts[$opt_key]}" && "$arg" != *=* ]]; then
+        rsync_opts+=("$arg" "${@[$((i+1))]}")
+        (( i += 2 ))
+      else
+        rsync_opts+=("$arg")
+        (( i++ ))
+      fi
     else
       args+=("$arg")
+      (( i++ ))
     fi
   done
 
@@ -234,7 +260,8 @@ function ssrsync() {
     return 1
   fi
 
-  echo $'\033[0;33m'"Executing command: ${(q)final_cmd[@]}"$'\033[0m'
+  echo "Executing command:"
+  echo "  ${_YELLOW}${(q)final_cmd[@]}${_RESET}"
   "${final_cmd[@]}"
 }
 
