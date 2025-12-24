@@ -34,7 +34,6 @@ prompt_dir() {
 prompt_context() {
   if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
     if [[ $PWD != "$HOME" ]]; then
-      START_ICON=''
       _load_dir_icon
       prompt_segment default green "%(!.%{%F{white}%}.)$START_ICON "
     fi
@@ -43,21 +42,26 @@ prompt_context() {
 
 # Icon for begin the prompt with Nerd Font
 _load_dir_icon() {
-  if [[ -s "$PWD/bin/magento" ]]; then
-    START_ICON="\ue740" #
-    return 1
-  elif [[ -s "$PWD/docker-compose.yml" ]]; then
-    START_ICON="\uf308" #
-    return 1
-  elif [[ $PWD/ == /home/* ]]; then
+  local dir=$PWD
+  while [[ $dir != '/' ]]; do
+    if [[ -s "$dir/bin/magento" ]]; then
+      START_ICON="\ue740"
+      return #
+    elif [[ -f "$dir/layout/theme.liquid" ]]; then
+      START_ICON="\ue670"
+      return # 
+    elif [[ -s "$dir/docker-compose.yml" ]]; then
+      START_ICON="\uf308"
+      return #
+    fi
+    dir=${dir:h}
+  done
+  if [[ $PWD/ == /home/* ]]; then
     START_ICON="\Uf02dc" #󰋜
-    return 1
   elif [[ ! -w $PWD ]]; then
-    local -i w=$?
-    START_ICON=""
+    START_ICON="\ue672" #
   else
     START_ICON="\uf31b" #
-    #START_ICON="\uf07c" #
   fi
 }
 #➜
@@ -95,7 +99,7 @@ prompt_status() {
   local symbols
   symbols=()
   if [[ $RETVAL -eq 130 ]]; then
-    symbols+="%{%F{default}%}$CROSS"
+    symbols+="%{%F{default}%}⚒"
   elif [[ $RETVAL -ne 0 ]]; then
     symbols+="%{%F{red}%}$CROSS $CROSS $CROSS"
   fi

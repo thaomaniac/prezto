@@ -10,13 +10,15 @@ alias gst='git status'
 alias gb='git branch'
 alias gcm='git commit --message'
 alias gco='git checkout'
+alias gsw='git switch'
 alias gf='git fetch'
 alias gm='git merge'
 alias gfm='git pull'
 alias gp='git push'
 alias gpc='git push --set-upstream origin "$(git-branch-current 2> /dev/null)"'
-alias grs='git reset'
-alias gs='git stash'
+alias grs='git restore'
+alias grset='git reset'
+alias gsh='git stash'
 
 ## Functions
 
@@ -44,7 +46,7 @@ commit() {
 
 
 # Pretty git log graph
-git-graph() {
+git-log-graph() {
   if [[ "$1" == "-h" ]]; then
     echo "Usage: git-graph [git-log options]"
     echo "  git-graph              pretty git log graph"
