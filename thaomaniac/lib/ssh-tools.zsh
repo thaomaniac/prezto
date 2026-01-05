@@ -6,19 +6,25 @@ ssh() {
 }
 
 # Extract connection details from a companion `ssh-*` function.
+# These are hand-written per machine in local/ssh.zsh (gitignored).
 #
-# Supported shapes:
-# - `ssh -i /path/to/key -p2222 user@example.com`
-# - `ssh -i /path/to/key user@example.com -t 'cd /path && exec $SHELL'`
-# - `ssh host-alias`
-# - `sshpass -p 'secret' ssh user@example.com`
-# - `sshpass -p "$ssh_pass" ssh -i /path/to/key user@example.com`
+# Supported shapes — function body must be a SINGLE `ssh`/`sshpass ... ssh`
+# line:
 #
-# Notes:
-# - The target function should contain a single-line `ssh` or `sshpass ... ssh`
-#   command so this parser can extract key, port, password, and remote host.
-# - When `sshpass` uses a variable, define it inside the same function in a
-#   simple assignment such as `local ssh_pass='secret'`.
+#   # key + auto-cd into a dir on connect
+#   function ssh-example() {
+#     ssh -i ~/.ssh/example.pem user@example.com -t 'cd /var/www/html && exec $SHELL'
+#   }
+#
+#   # plain host alias (e.g. defined in ~/.ssh/config)
+#   function ssh-example() {
+#     ssh example-host-alias
+#   }
+#
+#   # password auth via sshpass — inline
+#   function ssh-example() {
+#     sshpass -p 'secret' ssh user@example.com
+#   }
 function _extract_ssh_config() {
   local target_func="$1"
   if ! whence -f "$target_func" >/dev/null && whence -f "ssh-$target_func" >/dev/null; then
@@ -148,8 +154,10 @@ function sscp() {
     return 1
   fi
 
+  local _display="$final_cmd"
+  [[ -n "$PASS_VAL" ]] && _display="${_display/$PASS_VAL/****}"
   echo "Executing command:"
-  echo "  ${_YELLOW}${final_cmd}${_RESET}"
+  echo "  ${_YELLOW}${_display}${_RESET}"
   eval "$final_cmd"
 }
 
@@ -260,8 +268,10 @@ function ssrsync() {
     return 1
   fi
 
+  local _display="${(q)final_cmd[@]}"
+  [[ -n "$PASS_VAL" ]] && _display="${_display/$PASS_VAL/****}"
   echo "Executing command:"
-  echo "  ${_YELLOW}${(q)final_cmd[@]}${_RESET}"
+  echo "  ${_YELLOW}${_display}${_RESET}"
   "${final_cmd[@]}"
 }
 
